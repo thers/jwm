@@ -4,6 +4,7 @@
 #include <wasm.h>
 #include <parser.h>
 #include "sections/TypeSection.h"
+#include "sections/ImportSection.h"
 
 namespace wasm {
     class Section {
@@ -17,6 +18,7 @@ namespace wasm {
         std::unique_ptr<Parser> contentParser;
 
         std::unique_ptr<sections::TypeSection> typeContent;
+        std::unique_ptr<sections::ImportSection> importContent;
 
         void parse(Parser& parser);
     };

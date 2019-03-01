@@ -16,7 +16,11 @@ namespace wasm {
 
         switch (type) {
             case wasm::section::s_type:
-                typeContent = std::make_unique<sections::TypeSection>(size, cp);
+                typeContent = std::make_unique<sections::TypeSection>(size, *contentParser.get());
+                break;
+
+            case wasm::section::s_import:
+                importContent = std::make_unique<sections::ImportSection>(size, *contentParser.get());
                 break;
         }
     }

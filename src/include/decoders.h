@@ -22,7 +22,7 @@ namespace wasm::decoders {
     }
 
     inline wasm::memop memory(wasm::opcode op, Parser& parser) {
-        return {op, parser.read_u32(), parser.read_u32()};
+        return {op, {parser.read_u32(), parser.read_u32()}};
     }
 
     inline wasm::funcdecl functype(Parser& parser) {
@@ -38,5 +38,40 @@ namespace wasm::decoders {
         auto resultTypes = vec<wasm::valtype>(parser, readValtype);
 
         return {parameterTypes, resultTypes};
+    }
+
+    inline wasm::name name(Parser& parser) {
+        auto readByte = [&] () {
+            return parser.read();
+        };
+
+        auto bytes = vec<byte_t>(parser, readByte);
+
+        return {bytes.begin(), bytes.end()};
+    }
+
+    inline wasm::limit_finite limit_finite(Parser& parser) {
+        return {parser.read_u32(), parser.read_u32()};
+    }
+
+    inline wasm::tabletype tabletype(Parser& parser) {
+        auto elemtype = parser.read();
+
+        if (elemtype != 0x70) {
+            scream("\nWrong tabletype\n");
+        }
+
+        return limit_finite(parser);
+    }
+
+    inline wasm::memtype memtype(Parser& parser) {
+        return limit_finite(parser);
+    }
+
+    inline wasm::globaltype globaltype(Parser& parser) {
+        auto t = static_cast<wasm::valtype>(parser.read());
+        auto m = static_cast<wasm::mut>(parser.read());
+
+        return {t, m};
     }
 }

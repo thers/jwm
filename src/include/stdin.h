@@ -7,6 +7,7 @@
 #include <memory>
 #include <string_view>
 #include <stdexcept>
+#include <string>
 
 typedef uint8_t byte_t;
 

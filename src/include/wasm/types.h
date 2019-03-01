@@ -22,4 +22,20 @@ namespace wasm {
         vt_f32 = type::t_f32,
         vt_f64 = type::t_f64,
     };
+
+    enum importtype : byte_t {
+        it_typeidx = 0x00,
+        it_tabletype = 0x01,
+        it_memtype = 0x02,
+        it_globaltype = 0x03,
+    };
+
+    enum blocktype : byte_t {
+        bt_empty = 0x40
+    };
+
+    enum mut : byte_t {
+        m_const = 0x00,
+        m_var = 0x01
+    };
 }
