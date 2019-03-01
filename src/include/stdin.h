@@ -6,15 +6,14 @@
 #include <vector>
 #include <memory>
 #include <string_view>
+#include <stdexcept>
 
 typedef uint8_t byte_t;
-typedef std::vector<byte_t> module_t;
 
 inline auto print = std::printf;
 
-inline void scream(const char* msg, int code = 0) {
-    std::cerr << msg;
-    throw code;
+inline void scream(std::string_view msg) {
+    throw std::runtime_error {msg.data()};
 }
 
 inline void printb(uint8_t byte) {

@@ -8,7 +8,7 @@
 namespace wasm::decoders {
     template <typename T, typename F>
     inline wasm::vec<T> vec(Parser& parser, F readVal) {
-        u32 length = parser.readu32();
+        u32 length = parser.read_u32();
 
         wasm::vec<T> result(length);
 
@@ -22,7 +22,7 @@ namespace wasm::decoders {
     }
 
     inline wasm::memop memory(wasm::opcode op, Parser& parser) {
-        return std::tuple {op, parser.readu32(), parser.readu32()};
+        return {op, parser.read_u32(), parser.read_u32()};
     }
 
     inline wasm::funcdecl functype(Parser& parser) {
@@ -37,6 +37,6 @@ namespace wasm::decoders {
         auto parameterTypes = vec<wasm::valtype>(parser, readValtype);
         auto resultTypes = vec<wasm::valtype>(parser, readValtype);
 
-        return std::tuple {parameterTypes, resultTypes};
+        return {parameterTypes, resultTypes};
     }
 }

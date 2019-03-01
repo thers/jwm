@@ -13,38 +13,6 @@ private:
     pos_t size;
     pos_t pos;
 
-public:
-    Parser(const wasm::content_t& c): data(c), size(c.size()), pos(0) {}
-
-    bool eof() {
-        return pos >= size;
-    }
-
-    pos_t get_pos() {
-        return pos;
-    }
-
-    byte_t read() {
-        return data[pos++];
-    }
-
-    wasm::content_t read(int length) {
-        auto from = data.begin() + pos;
-        auto to = from + length;
-
-        pos += length;
-
-        return wasm::content_t (from, to);
-    }
-
-    template <typename T>
-    T read() {
-        auto bytes = read(sizeof(T));
-        std::reverse(std::begin(bytes), std::end(bytes));
-
-        return *reinterpret_cast<T *>(bytes.data());
-    }
-
     template <typename T>
     T readUnsigned() {
         T result = 0;
@@ -83,7 +51,51 @@ public:
         return result;
     }
 
-    uint8_t readu32() {
-        return readUnsigned<uint8_t>();
+public:
+    Parser(const wasm::content_t& c): data(c), size(c.size()), pos(0) {}
+
+    bool eof() {
+        return pos >= size;
+    }
+
+    pos_t get_pos() {
+        return pos;
+    }
+
+    byte_t read() {
+        return data[pos++];
+    }
+
+    wasm::content_t read(int length) {
+        auto from = data.begin() + pos;
+        auto to = from + length;
+
+        pos += length;
+
+        return {from, to};
+    }
+
+    template <typename T>
+    T read() {
+        auto bytes = read(sizeof(T));
+        std::reverse(std::begin(bytes), std::end(bytes));
+
+        return *reinterpret_cast<T *>(bytes.data());
+    }
+
+    wasm::u32 read_u32() {
+        return readUnsigned<wasm::u32>();
+    }
+
+    wasm::i32 read_i32() {
+        return readSigned<wasm::i32>();
+    }
+
+    wasm::u64 read_u64() {
+        return readUnsigned<wasm::u64>();
+    }
+
+    wasm::i64 read_i64() {
+        return readSigned<wasm::i64>();
     }
 };
