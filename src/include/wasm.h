@@ -45,9 +45,9 @@ namespace wasm {
     };
     using memop_t = seq_t<opcode, memaccess_t>;
 
-    struct funcdecl_t {
-        vec_t<valtype> argumentsTypes;
-        vec_t<valtype> resultsTypes;
+    struct func_t {
+        vec_t<valtype> arguments_types;
+        vec_t<valtype> results_types;
     };
 
     using typeidx_t = u32_t;
@@ -55,8 +55,8 @@ namespace wasm {
     using mem_t = limit_t;
 
     struct global_t {
-        valtype t;
-        mut m;
+        valtype value_type;
+        bool is_mutable;
     };
 
     inline constexpr u32_t table_limit_max = std::numeric_limits<u32_t>::max();

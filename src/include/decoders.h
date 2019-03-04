@@ -97,7 +97,7 @@ namespace wasm::decoders {
         return {op, {u32(reader), u32(reader)}};
     }
 
-    inline wasm::funcdecl_t functype(Reader& reader) {
+    inline wasm::func_t functype(Reader& reader) {
         auto funcbyte = byteEnumItem<wasm::type>(reader);
 
         if (funcbyte != wasm::type::t_functype) {
@@ -149,9 +149,9 @@ namespace wasm::decoders {
     }
 
     inline wasm::global_t global(Reader &reader) {
-        auto t = byteEnumItem<wasm::valtype>(reader);
-        auto m = byteEnumItem<wasm::mut>(reader);
+        auto valtype = byteEnumItem<wasm::valtype>(reader);
+        auto mut = byteEnumItem<wasm::mut>(reader);
 
-        return {t, m};
+        return {valtype, mut == wasm::mut::m_const};
     }
 }
