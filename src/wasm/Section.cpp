@@ -27,6 +27,10 @@ namespace wasm {
             case wasm::section::s_table:
                 tableContent = std::make_unique<sections::TableSection>(*contentParser);
                 break;
+
+            case wasm::section::s_memory:
+                memoryContent = std::make_unique<sections::MemorySection>(*contentParser);
+                break;
         }
     }
 }
