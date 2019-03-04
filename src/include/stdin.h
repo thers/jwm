@@ -33,4 +33,6 @@ inline void printbv(std::vector<byte_t> dat) {
             print("\n");
         }
     }
+
+    print("\n");
 }

@@ -2,7 +2,6 @@
 
 #include <stdin.h>
 #include <wasm.h>
-#include <reader.h>
 #include <decoders.h>
 
 namespace wasm::sections {
@@ -10,7 +9,7 @@ namespace wasm::sections {
     public:
         wasm::vec_t<wasm::func_t> funcs;
 
-        TypeSection(Reader& reader) {
+        TypeSection(wasm::Reader& reader) {
             auto readFuncdecl = [&] () {
                 return wasm::decoders::functype(reader);
             };

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdin.h>
-#include <reader.h>
 #include <wasm.h>
 #include <tuple>
 #include <algorithm>
@@ -84,9 +83,7 @@ namespace wasm::decoders {
 
         wasm::vec_t<T> result(length);
 
-        std::size_t index = 0;
-
-        for (; index < length; index++) {
+        for (std::size_t index = 0; index < length; index++) {
             result[index] = readVal();
         }
 
@@ -153,5 +150,12 @@ namespace wasm::decoders {
         auto mut = byteEnumItem<wasm::mut>(reader);
 
         return {valtype, mut == wasm::mut::m_const};
+    }
+
+    inline wasm::section_t section(Reader& reader) {
+        auto type = byteEnumItem<wasm::section>(reader);
+        auto size = u32(reader);
+
+        return {type, size};
     }
 }

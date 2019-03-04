@@ -9,7 +9,6 @@ add_executable(jwm
         src/main.cpp
         src/utils/io.h
         src/utils/io.cpp
-        src/include/reader.h
         src/include/wasm/opcodes.h
         src/include/wasm/types.h
         src/include/stdin.h
@@ -18,8 +17,10 @@ add_executable(jwm
         src/include/decoders.h
         src/wasm/Module.cpp
         src/wasm/Module.h
-        src/wasm/Section.cpp
-        src/wasm/Section.h
         function.cpp
         src/wasm/sections/TypeSection.h
-        src/wasm/sections/ImportSection.h src/wasm/sections/FunctionSection.h src/wasm/sections/TableSection.h src/wasm/sections/MemorySection.h)
+        src/wasm/sections/ImportSection.h
+        src/wasm/sections/FunctionSection.h
+        src/wasm/sections/TableSection.h
+        src/wasm/sections/MemorySection.h
+        )

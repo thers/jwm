@@ -76,4 +76,46 @@ namespace wasm {
 
     inline const u32_t magicNumber = 0x0061736d;
     inline const u32_t versionNumber = 0x01000000;
+
+    typedef std::size_t pos_t;
+
+    class Reader {
+    private:
+        const content_t data;
+        pos_t size;
+        pos_t pos;
+
+    public:
+        Reader(const content_t c): data(c), size(c.size()), pos(0) {}
+
+        bool eof() {
+            return pos >= size;
+        }
+
+        pos_t get_pos() {
+            return pos;
+        }
+
+        content_t get_content() {
+            return {data.begin() + pos,data.end()};
+        }
+
+        byte_t next() {
+            return data[pos++];
+        }
+
+        content_t content(int length) {
+            auto from = data.begin() + pos;
+            auto to = from + length;
+
+            pos += length;
+
+            return {from, to};
+        }
+    };
+
+    struct section_t {
+        section type;
+        size_t size;
+    };
 }

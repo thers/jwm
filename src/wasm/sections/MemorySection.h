@@ -2,7 +2,6 @@
 
 #include <stdin.h>
 #include <wasm.h>
-#include <reader.h>
 #include <decoders.h>
 
 namespace wasm::sections {
