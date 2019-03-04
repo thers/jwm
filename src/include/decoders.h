@@ -124,8 +124,14 @@ namespace wasm::decoders {
         return {bytes.begin(), bytes.end()};
     }
 
-    inline wasm::limit_finite limit_finite(Reader& reader) {
-        return {u32(reader), u32(reader)};
+    inline wasm::limit limit(Reader& reader) {
+        auto limittype = byteEnumItem<wasm::limittype>(reader);
+
+        if (limittype == wasm::limittype::mt_finite) {
+            return {true, u32(reader), u32(reader)};
+        }
+
+        return {false, u32(reader), 0};
     }
 
     inline wasm::tabletype tabletype(Reader& reader) {
@@ -135,11 +141,11 @@ namespace wasm::decoders {
             scream("\nWrong tabletype\n");
         }
 
-        return limit_finite(reader);
+        return limit(reader);
     }
 
     inline wasm::memtype memtype(Reader& reader) {
-        return limit_finite(reader);
+        return limit(reader);
     }
 
     inline wasm::globaltype globaltype(Reader& reader) {

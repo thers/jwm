@@ -23,6 +23,10 @@ namespace wasm {
             case wasm::section::s_function:
                 functionContent = std::make_unique<sections::FunctionSection>(*contentParser);
                 break;
+
+            case wasm::section::s_table:
+                tableContent = std::make_unique<sections::TableSection>(*contentParser);
+                break;
         }
     }
 }

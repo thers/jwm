@@ -38,4 +38,9 @@ namespace wasm {
         m_const = 0x00,
         m_var = 0x01
     };
+
+    enum limittype : byte_t {
+        mt_infinite = 0x00,
+        mt_finite = 0x01,
+    };
 }

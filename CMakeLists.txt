@@ -22,4 +22,4 @@ add_executable(jwm
         src/wasm/Section.h
         function.cpp
         src/wasm/sections/TypeSection.h
-        src/wasm/sections/ImportSection.h src/wasm/sections/FunctionSection.h)
+        src/wasm/sections/ImportSection.h src/wasm/sections/FunctionSection.h src/wasm/sections/TableSection.h)

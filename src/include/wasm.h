@@ -32,10 +32,12 @@ namespace wasm {
     template <typename T>
     using vec = std::vector<T>;
 
-    using limit_min = u32;
-    using limit_max = u32;
-    using limit_infinite = limit_min;
-    using limit_finite = seq<limit_min, limit_max>;
+    struct limit {
+        bool finite;
+
+        u32 min;
+        u32 max;
+    };
 
     struct memaccess {
         u32 offset;
@@ -45,15 +47,15 @@ namespace wasm {
     using funcdecl = seq<vec<valtype>, vec<valtype>>;
 
     using typeidx = u32;
-    using tabletype = limit_finite;
-    using memtype = limit_finite;
+    using tabletype = limit;
+    using memtype = limit;
     struct globaltype {
         valtype t;
         mut m;
     };
 
-    inline constexpr limit_max table_limit_max = std::numeric_limits<limit_max>::max();
-    inline constexpr limit_max mem_limit_max = std::numeric_limits<uint16_t>::max();
+    inline constexpr u32 table_limit_max = std::numeric_limits<u32>::max();
+    inline constexpr u32 mem_limit_max = std::numeric_limits<uint16_t>::max();
 
     struct import_id {
         name module;

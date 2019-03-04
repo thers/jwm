@@ -6,6 +6,7 @@
 #include "sections/TypeSection.h"
 #include "sections/ImportSection.h"
 #include "sections/FunctionSection.h"
+#include "sections/TableSection.h"
 
 namespace wasm {
     class Section {
@@ -21,6 +22,7 @@ namespace wasm {
         std::unique_ptr<sections::TypeSection> typeContent;
         std::unique_ptr<sections::ImportSection> importContent;
         std::unique_ptr<sections::FunctionSection> functionContent;
+        std::unique_ptr<sections::TableSection> tableContent;
 
         void parse(Reader& reader);
     };
