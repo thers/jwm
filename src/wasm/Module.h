@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdin.h>
-#include <parser.h>
+#include <reader.h>
 #include <wasm.h>
 
 #include "Section.h"
@@ -16,6 +16,6 @@ namespace wasm {
 
         Module(): is_valid(false) {}
 
-        void parse(Parser& parser);
+        void parse(Reader& reader);
     };
 }

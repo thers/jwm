@@ -9,7 +9,7 @@ add_executable(jwm
         src/main.cpp
         src/utils/io.h
         src/utils/io.cpp
-        src/include/parser.h
+        src/include/reader.h
         src/include/wasm/opcodes.h
         src/include/wasm/types.h
         src/include/stdin.h

@@ -1,12 +1,12 @@
 #include "Module.h"
 
 namespace wasm {
-    void Module::parse(Parser &parser) {
-        if (parser.read<u32>() != magicNumber) {
+    void Module::parse(Reader &parser) {
+        if (decoders::reinterpretBytes<u32>(parser) != magicNumber) {
             scream("Magic number is invalid\n");
         }
 
-        if (parser.read<u32>() != versionNumber) {
+        if (decoders::reinterpretBytes<u32>(parser) != versionNumber) {
             scream("Missing or incompatible version\n");
         }
 

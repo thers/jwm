@@ -2,7 +2,7 @@
 
 #include <stdin.h>
 #include <wasm.h>
-#include <parser.h>
+#include <reader.h>
 #include "sections/TypeSection.h"
 #include "sections/ImportSection.h"
 #include "sections/FunctionSection.h"
@@ -16,12 +16,12 @@ namespace wasm {
         section type;
         size_t size;
         content_t content;
-        std::unique_ptr<Parser> contentParser;
+        std::unique_ptr<Reader> contentParser;
 
         std::unique_ptr<sections::TypeSection> typeContent;
         std::unique_ptr<sections::ImportSection> importContent;
         std::unique_ptr<sections::FunctionSection> functionContent;
 
-        void parse(Parser& parser);
+        void parse(Reader& reader);
     };
 }

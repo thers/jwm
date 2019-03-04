@@ -1,29 +1,27 @@
 #include "Section.h"
 
 namespace wasm {
-    void Section::parse(Parser &parser) {
-        type = static_cast<section>(parser.read());
-        size = parser.read_u32();
-        content = parser.read(size);
-        contentParser = std::make_unique<Parser>(content);
+    void Section::parse(Reader& reader) {
+        type = decoders::byteEnumItem<section>(reader);
+        size = decoders::u32(reader);
+        content = reader.content(size);
+        contentParser = std::make_unique<Reader>(content);
 
         parseContent();
     }
 
     void Section::parseContent() {
-        auto cp = *contentParser.get();
-
         switch (type) {
             case wasm::section::s_type:
-                typeContent = std::make_unique<sections::TypeSection>(cp);
+                typeContent = std::make_unique<sections::TypeSection>(*contentParser);
                 break;
 
             case wasm::section::s_import:
-                importContent = std::make_unique<sections::ImportSection>(cp);
+                importContent = std::make_unique<sections::ImportSection>(*contentParser);
                 break;
 
             case wasm::section::s_function:
-                functionContent = std::make_unique<sections::FunctionSection>(cp);
+                functionContent = std::make_unique<sections::FunctionSection>(*contentParser);
                 break;
         }
     }

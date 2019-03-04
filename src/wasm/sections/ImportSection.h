@@ -2,7 +2,7 @@
 
 #include <stdin.h>
 #include <wasm.h>
-#include <parser.h>
+#include <reader.h>
 #include <decoders.h>
 
 namespace wasm::sections {
@@ -10,37 +10,37 @@ namespace wasm::sections {
     public:
         vec<wasm::importdesc> imports;
 
-        ImportSection(Parser& parser) {
+        ImportSection(Reader& reader) {
             auto readImport = [&] () {
                 wasm::importdesc import;
 
-                import.module = wasm::decoders::name(parser);
-                import.nm = wasm::decoders::name(parser);
+                import.module = wasm::decoders::name(reader);
+                import.nm = wasm::decoders::name(reader);
 
-                auto type = parser.read_type<wasm::importtype>();
+                auto type = decoders::byteEnumItem<wasm::importtype>(reader);
 
                 switch (type) {
                     case wasm::importtype::it_typeidx:
-                        import.x = parser.read_u32();
+                        import.x = decoders::u32(reader);
                         break;
 
                     case wasm::importtype::it_tabletype:
-                        import.tt = wasm::decoders::tabletype(parser);
+                        import.tt = wasm::decoders::tabletype(reader);
                         break;
 
                     case wasm::importtype::it_memtype:
-                        import.mt = wasm::decoders::memtype(parser);
+                        import.mt = wasm::decoders::memtype(reader);
                         break;
 
                     case wasm::importtype::it_globaltype:
-                        import.gt = wasm::decoders::globaltype(parser);
+                        import.gt = wasm::decoders::globaltype(reader);
                         break;
                 }
 
                 return import;
             };
 
-            imports = wasm::decoders::vec<wasm::importdesc>(parser, readImport);
+            imports = wasm::decoders::vec<wasm::importdesc>(reader, readImport);
         }
     };
 }

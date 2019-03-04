@@ -2,7 +2,7 @@
 
 #include <stdin.h>
 #include <wasm.h>
-#include <parser.h>
+#include <reader.h>
 #include <decoders.h>
 
 namespace wasm::sections {
@@ -10,12 +10,12 @@ namespace wasm::sections {
     public:
         wasm::vec<wasm::u32> typeindices;
 
-        FunctionSection(Parser& parser) {
+        FunctionSection(Reader& reader) {
             auto readTypeidx = [&] () {
-                return parser.read_u32();
+                return decoders::u32(reader);
             };
 
-            typeindices = wasm::decoders::vec<wasm::u32>(parser, readTypeidx);
+            typeindices = wasm::decoders::vec<wasm::u32>(reader, readTypeidx);
         }
     };
 }

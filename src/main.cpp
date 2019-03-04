@@ -1,16 +1,16 @@
 #include <stdin.h>
 
 #include "utils/io.h"
-#include "parser.h"
+#include "reader.h"
 #include "wasm/Module.h"
 
 int main(int argc, char ** argv) {
     auto moduleContent = jwmio::readModule(argv[1]);
 
-    Parser parser(moduleContent);
+    Reader reader(moduleContent);
     wasm::Module module;
 
-    module.parse(parser);
+    module.parse(reader);
 
     print("\n");
     printbv(moduleContent);
