@@ -8,14 +8,14 @@
 namespace wasm::sections {
     class FunctionSection {
     public:
-        wasm::vec<wasm::u32> typeindices;
+        wasm::vec_t<wasm::u32_t> typeindices;
 
-        FunctionSection(Reader& reader) {
+        explicit FunctionSection(Reader& reader) {
             auto readTypeidx = [&] () {
                 return decoders::u32(reader);
             };
 
-            typeindices = wasm::decoders::vec<wasm::u32>(reader, readTypeidx);
+            typeindices = wasm::decoders::vec<wasm::u32_t>(reader, readTypeidx);
         }
     };
 }

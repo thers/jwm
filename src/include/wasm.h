@@ -11,69 +11,69 @@
 
 namespace wasm {
     template <typename... T>
-    using seq = std::tuple<T...>;
+    using seq_t = std::tuple<T...>;
 
     using size_t = uint32_t;
     using content_t = std::vector<byte_t>;
 
-    using u64 = uint64_t;
-    using i64 = int64_t;
-    using u32 = uint32_t;
-    using i32 = int32_t;
+    using u64_t = uint64_t;
+    using i64_t = int64_t;
+    using u32_t = uint32_t;
+    using i32_t = int32_t;
 
     using f32 = float;
     using f64 = double;
 
-    using name = std::string;
+    using name_t = std::string;
 
-    using memoffset = u32;
-    using memalign = u32;
+    using memoffset = u32_t;
+    using memalign = u32_t;
 
     template <typename T>
-    using vec = std::vector<T>;
+    using vec_t = std::vector<T>;
 
-    struct limit {
+    struct limit_t {
         bool finite;
 
-        u32 min;
-        u32 max;
+        u32_t min;
+        u32_t max;
     };
 
-    struct memaccess {
-        u32 offset;
-        u32 align;
+    struct memaccess_t {
+        u32_t offset;
+        u32_t align;
     };
-    using memop = seq<opcode, memaccess>;
-    using funcdecl = seq<vec<valtype>, vec<valtype>>;
+    using memop_t = seq_t<opcode, memaccess_t>;
 
-    using typeidx = u32;
-    using tabletype = limit;
-    using memtype = limit;
-    struct globaltype {
+    struct funcdecl_t {
+        vec_t<valtype> argumentsTypes;
+        vec_t<valtype> resultsTypes;
+    };
+
+    using typeidx_t = u32_t;
+    using table_t = limit_t;
+    using mem_t = limit_t;
+
+    struct global_t {
         valtype t;
         mut m;
     };
 
-    inline constexpr u32 table_limit_max = std::numeric_limits<u32>::max();
-    inline constexpr u32 mem_limit_max = std::numeric_limits<uint16_t>::max();
+    inline constexpr u32_t table_limit_max = std::numeric_limits<u32_t>::max();
+    inline constexpr u32_t mem_limit_max = std::numeric_limits<uint16_t>::max();
 
-    struct import_id {
-        name module;
-        name nm;
-    };
-
-    struct importdesc {
-        name module;
-        name nm;
+    struct importdesc_t {
+        name_t module;
+        name_t nm;
 
         importtype type;
 
-        typeidx x;
-        tabletype tt;
-        memtype mt;
-        globaltype gt;
+        typeidx_t x;
+        table_t tt;
+        mem_t mt;
+        global_t gt;
     };
 
-    inline const u32 magicNumber = 0x0061736d;
-    inline const u32 versionNumber = 0x01000000;
+    inline const u32_t magicNumber = 0x0061736d;
+    inline const u32_t versionNumber = 0x01000000;
 }

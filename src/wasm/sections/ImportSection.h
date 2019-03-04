@@ -8,39 +8,39 @@
 namespace wasm::sections {
     class ImportSection {
     public:
-        vec<wasm::importdesc> imports;
+        vec_t<wasm::importdesc_t> imports;
 
-        ImportSection(Reader& reader) {
+        explicit ImportSection(Reader& reader) {
             auto readImport = [&] () {
-                wasm::importdesc import;
+                wasm::importdesc_t import;
 
                 import.module = wasm::decoders::name(reader);
                 import.nm = wasm::decoders::name(reader);
 
-                auto type = decoders::byteEnumItem<wasm::importtype>(reader);
+                import.type = decoders::byteEnumItem<wasm::importtype>(reader);
 
-                switch (type) {
+                switch (import.type) {
                     case wasm::importtype::it_typeidx:
                         import.x = decoders::u32(reader);
                         break;
 
                     case wasm::importtype::it_tabletype:
-                        import.tt = wasm::decoders::tabletype(reader);
+                        import.tt = wasm::decoders::table(reader);
                         break;
 
                     case wasm::importtype::it_memtype:
-                        import.mt = wasm::decoders::memtype(reader);
+                        import.mt = wasm::decoders::mem(reader);
                         break;
 
                     case wasm::importtype::it_globaltype:
-                        import.gt = wasm::decoders::globaltype(reader);
+                        import.gt = wasm::decoders::global(reader);
                         break;
                 }
 
                 return import;
             };
 
-            imports = wasm::decoders::vec<wasm::importdesc>(reader, readImport);
+            imports = wasm::decoders::vec<wasm::importdesc_t>(reader, readImport);
         }
     };
 }

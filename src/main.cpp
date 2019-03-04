@@ -4,7 +4,7 @@
 #include "reader.h"
 #include "wasm/Module.h"
 
-int main(int argc, char ** argv) {
+int main(int argc, char** argv) {
     auto moduleContent = jwmio::readModule(argv[1]);
 
     Reader reader(moduleContent);

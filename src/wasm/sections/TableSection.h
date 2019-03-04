@@ -8,14 +8,14 @@
 namespace wasm::sections {
     class TableSection {
     public:
-        wasm::vec<wasm::tabletype> tables;
+        wasm::vec_t<wasm::table_t> tables;
 
-        TableSection(Reader& reader) {
+        explicit TableSection(Reader& reader) {
             auto readTable = [&] () {
-                return wasm::decoders::tabletype(reader);
+                return wasm::decoders::table(reader);
             };
 
-            tables = wasm::decoders::vec<wasm::tabletype>(reader, readTable);
+            tables = wasm::decoders::vec<wasm::table_t>(reader, readTable);
         }
     };
 }

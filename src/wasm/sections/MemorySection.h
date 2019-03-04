@@ -8,14 +8,14 @@
 namespace wasm::sections {
     class MemorySection {
     public:
-        wasm::vec<wasm::memtype> memories;
+        wasm::vec_t<wasm::mem_t> memories;
 
-        MemorySection(Reader& reader) {
+        explicit MemorySection(Reader& reader) {
             auto readMemory = [&] () {
-                return wasm::decoders::memtype(reader);
+                return wasm::decoders::mem(reader);
             };
 
-            memories = wasm::decoders::vec<wasm::memtype>(reader, readMemory);
+            memories = wasm::decoders::vec<wasm::mem_t>(reader, readMemory);
         }
     };
 }

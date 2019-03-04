@@ -62,27 +62,27 @@ namespace wasm::decoders {
         return static_cast<T>(byte(reader));
     }
 
-    inline wasm::u32 u32(Reader& reader) {
-        return unsignedInteger<wasm::u32>(reader);
+    inline wasm::u32_t u32(Reader& reader) {
+        return unsignedInteger<wasm::u32_t>(reader);
     }
 
-    inline wasm::u64 u64(Reader& reader) {
-        return unsignedInteger<wasm::u64>(reader);
+    inline wasm::u64_t u64(Reader& reader) {
+        return unsignedInteger<wasm::u64_t>(reader);
     }
 
-    inline wasm::i32 i32(Reader& reader) {
-        return signedInteger<wasm::i32>(reader);
+    inline wasm::i32_t i32(Reader& reader) {
+        return signedInteger<wasm::i32_t>(reader);
     }
 
-    inline wasm::i64 i64(Reader& reader) {
-        return signedInteger<wasm::i64>(reader);
+    inline wasm::i64_t i64(Reader& reader) {
+        return signedInteger<wasm::i64_t>(reader);
     }
 
     template <typename T, typename F>
-    inline wasm::vec<T> vec(Reader& reader, F readVal) {
-        wasm::u32 length = u32(reader);
+    inline wasm::vec_t<T> vec(Reader& reader, F readVal) {
+        wasm::u32_t length = u32(reader);
 
-        wasm::vec<T> result(length);
+        wasm::vec_t<T> result(length);
 
         std::size_t index = 0;
 
@@ -93,11 +93,11 @@ namespace wasm::decoders {
         return result;
     }
 
-    inline wasm::memop memory(wasm::opcode op, Reader& reader) {
+    inline wasm::memop_t memory(wasm::opcode op, Reader& reader) {
         return {op, {u32(reader), u32(reader)}};
     }
 
-    inline wasm::funcdecl functype(Reader& reader) {
+    inline wasm::funcdecl_t functype(Reader& reader) {
         auto funcbyte = byteEnumItem<wasm::type>(reader);
 
         if (funcbyte != wasm::type::t_functype) {
@@ -114,7 +114,7 @@ namespace wasm::decoders {
         return {parameterTypes, resultTypes};
     }
 
-    inline wasm::name name(Reader& reader) {
+    inline wasm::name_t name(Reader& reader) {
         auto readByte = [&] () {
             return byte(reader);
         };
@@ -124,7 +124,7 @@ namespace wasm::decoders {
         return {bytes.begin(), bytes.end()};
     }
 
-    inline wasm::limit limit(Reader& reader) {
+    inline wasm::limit_t limit(Reader& reader) {
         auto limittype = byteEnumItem<wasm::limittype>(reader);
 
         if (limittype == wasm::limittype::mt_finite) {
@@ -134,21 +134,21 @@ namespace wasm::decoders {
         return {false, u32(reader), 0};
     }
 
-    inline wasm::tabletype tabletype(Reader& reader) {
+    inline wasm::table_t table(Reader &reader) {
         auto elemtype = byte(reader);
 
         if (elemtype != 0x70) {
-            scream("\nWrong tabletype\n");
+            scream("\nWrong table_t\n");
         }
 
         return limit(reader);
     }
 
-    inline wasm::memtype memtype(Reader& reader) {
+    inline wasm::mem_t mem(Reader &reader) {
         return limit(reader);
     }
 
-    inline wasm::globaltype globaltype(Reader& reader) {
+    inline wasm::global_t global(Reader &reader) {
         auto t = byteEnumItem<wasm::valtype>(reader);
         auto m = byteEnumItem<wasm::mut>(reader);
 

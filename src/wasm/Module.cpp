@@ -2,11 +2,11 @@
 
 namespace wasm {
     void Module::parse(Reader &parser) {
-        if (decoders::reinterpretBytes<u32>(parser) != magicNumber) {
+        if (decoders::reinterpretBytes<u32_t>(parser) != magicNumber) {
             scream("Magic number is invalid\n");
         }
 
-        if (decoders::reinterpretBytes<u32>(parser) != versionNumber) {
+        if (decoders::reinterpretBytes<u32_t>(parser) != versionNumber) {
             scream("Missing or incompatible version\n");
         }
 
