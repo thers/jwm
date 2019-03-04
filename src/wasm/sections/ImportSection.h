@@ -8,17 +8,16 @@
 namespace wasm::sections {
     class ImportSection {
     public:
-        wasm::size_t size;
         vec<wasm::importdesc> imports;
 
-        ImportSection(wasm::size_t s, Parser& parser) : size(s) {
+        ImportSection(Parser& parser) {
             auto readImport = [&] () {
                 wasm::importdesc import;
 
                 import.module = wasm::decoders::name(parser);
                 import.nm = wasm::decoders::name(parser);
 
-                auto type = static_cast<wasm::importtype>(parser.read());
+                auto type = parser.read_type<wasm::importtype>();
 
                 switch (type) {
                     case wasm::importtype::it_typeidx:

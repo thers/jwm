@@ -83,6 +83,11 @@ public:
         return *reinterpret_cast<T *>(bytes.data());
     }
 
+    template <typename T>
+    T read_type() {
+        return static_cast<T>(read());
+    }
+
     wasm::u32 read_u32() {
         return readUnsigned<wasm::u32>();
     }

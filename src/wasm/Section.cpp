@@ -1,5 +1,4 @@
 #include "Section.h"
-#include "sections/TypeSection.h"
 
 namespace wasm {
     void Section::parse(Parser &parser) {
@@ -16,11 +15,15 @@ namespace wasm {
 
         switch (type) {
             case wasm::section::s_type:
-                typeContent = std::make_unique<sections::TypeSection>(size, *contentParser.get());
+                typeContent = std::make_unique<sections::TypeSection>(cp);
                 break;
 
             case wasm::section::s_import:
-                importContent = std::make_unique<sections::ImportSection>(size, *contentParser.get());
+                importContent = std::make_unique<sections::ImportSection>(cp);
+                break;
+
+            case wasm::section::s_function:
+                functionContent = std::make_unique<sections::FunctionSection>(cp);
                 break;
         }
     }

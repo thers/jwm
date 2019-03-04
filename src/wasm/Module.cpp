@@ -2,8 +2,6 @@
 
 namespace wasm {
     void Module::parse(Parser &parser) {
-        // First check if magic sequence present
-
         if (parser.read<u32>() != magicNumber) {
             scream("Magic number is invalid\n");
         }

@@ -12,5 +12,8 @@ int main(int argc, char ** argv) {
 
     module.parse(parser);
 
+    print("\n");
+    printbv(moduleContent);
+
     return 0;
 }

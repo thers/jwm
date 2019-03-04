@@ -8,10 +8,9 @@
 namespace wasm::sections {
     class TypeSection {
     public:
-        wasm::size_t size;
         wasm::vec<wasm::funcdecl> funcs;
 
-        TypeSection(wasm::size_t s, Parser& parser) : size(s) {
+        TypeSection(Parser& parser) {
             auto readFuncdecl = [&] () {
                 return wasm::decoders::functype(parser);
             };
