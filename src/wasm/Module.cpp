@@ -16,29 +16,31 @@ namespace wasm {
 
         while (!reader.eof()) {
             auto [type, size] = decoders::section(reader);
-            Reader sectionReader(reader.content(size));
+            auto pos_before = reader.get_pos();
 
             switch (type) {
                 case wasm::section::s_type:
-                    typeSection = std::make_unique<sections::TypeSection>(sectionReader);
+                    typeSection = std::make_unique<sections::TypeSection>(reader);
                     break;
 
                 case wasm::section::s_import:
-                    importSection = std::make_unique<sections::ImportSection>(sectionReader);
+                    importSection = std::make_unique<sections::ImportSection>(reader);
                     break;
 
                 case wasm::section::s_function:
-                    functionSection = std::make_unique<sections::FunctionSection>(sectionReader);
+                    functionSection = std::make_unique<sections::FunctionSection>(reader);
                     break;
 
                 case wasm::section::s_table:
-                    tableSection = std::make_unique<sections::TableSection>(sectionReader);
+                    tableSection = std::make_unique<sections::TableSection>(reader);
                     break;
 
                 case wasm::section::s_memory:
-                    memorySection = std::make_unique<sections::MemorySection>(sectionReader);
+                    memorySection = std::make_unique<sections::MemorySection>(reader);
                     break;
             }
+
+            reader.seek_to(pos_before + size);
         }
     }
 }

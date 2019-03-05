@@ -104,6 +104,10 @@ namespace wasm {
             return data[pos++];
         }
 
+        void seek_to(pos_t p) {
+            pos = p;
+        }
+
         content_t content(int length) {
             auto from = data.begin() + pos;
             auto to = from + length;
