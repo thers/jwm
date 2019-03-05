@@ -14,10 +14,10 @@ int main(int argc, char** argv) {
     wasm::Reader reader(moduleContent);
     wasm::Module module;
 
-    module.parse(reader);
-
     print("\n");
     printbv(moduleContent);
+
+    module.parse(reader);
 
     return 0;
 }

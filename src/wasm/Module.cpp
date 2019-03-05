@@ -10,13 +10,13 @@ namespace wasm {
             scream("Missing or incompatible version\n");
         }
 
-        is_valid = true;
-
-        print("Module is valid, reading sections, pointer at %d\n", reader.get_pos());
+        print("Module is valid, reading sections:\n");
 
         while (!reader.eof()) {
             auto [type, size] = decoders::section(reader);
             auto pos_before = reader.get_pos();
+
+            print("\t%s, size %d, ", wasm::section_names[type], size);
 
             switch (type) {
                 case wasm::section::s_type:
@@ -38,7 +38,13 @@ namespace wasm {
                 case wasm::section::s_memory:
                     memorySection = std::make_unique<sections::MemorySection>(reader);
                     break;
+
+                case wasm::section::s_code:
+                    codeSection = std::make_unique<sections::CodeSection>(reader);
+                    break;
             }
+
+            print("done.\n");
 
             reader.seek_to(pos_before + size);
         }

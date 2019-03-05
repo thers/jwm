@@ -23,4 +23,4 @@ add_executable(jwm
         src/wasm/sections/FunctionSection.h
         src/wasm/sections/TableSection.h
         src/wasm/sections/MemorySection.h
-        )
+        src/wasm/sections/CodeSection.h)

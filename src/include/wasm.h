@@ -4,6 +4,7 @@
 #include <array>
 #include <vector>
 #include <limits>
+#include <variant>
 
 #include <wasm/opcodes.h>
 #include <wasm/sections.h>
@@ -21,8 +22,8 @@ namespace wasm {
     using u32_t = uint32_t;
     using i32_t = int32_t;
 
-    using f32 = float;
-    using f64 = double;
+    using f32_t = float;
+    using f64_t = double;
 
     using name_t = std::string;
 
@@ -39,18 +40,20 @@ namespace wasm {
         u32_t max;
     };
 
-    struct memaccess_t {
-        u32_t offset;
-        u32_t align;
-    };
-    using memop_t = seq_t<opcode, memaccess_t>;
-
-    struct func_t {
+    struct functype_t {
         vec_t<valtype> arguments_types;
         vec_t<valtype> results_types;
     };
 
-    using typeidx_t = u32_t;
+    using index_t = u32_t;
+
+    using typeidx_t = index_t;
+    using blockidx_t = index_t;
+    using labelidx_t = index_t;
+    using localidx_t = index_t;
+    using globalidx_t = index_t;
+
+
     using table_t = limit_t;
     using mem_t = limit_t;
 
@@ -118,8 +121,68 @@ namespace wasm {
         }
     };
 
+    struct result_t {
+        bool empty;
+        valtype type;
+    };
+
+    inline result_t default_result_t;
+
     struct section_t {
         section type;
         size_t size;
+    };
+
+    struct memop_arg_t {
+        u32_t offset;
+        u32_t align;
+    };
+
+    using br_table_arg_t = std::pair<vec_t<labelidx_t>, labelidx_t>;
+
+    using instr_arg_t = std::variant<
+            nullptr_t,
+            u32_t,
+            u64_t,
+            memop_arg_t,
+            br_table_arg_t
+    >;
+    struct instr_t {
+        opcode op;
+        instr_arg_t arg;
+    };
+
+    using expr_t = vec_t<instr_t>;
+    struct block_t {
+        result_t result;
+        expr_t exp;
+    };
+
+    struct expression_t {
+        expr_t main;
+        vec_t<block_t> blocks;
+    };
+
+    using constexpression_t = std::pair<constinstrtype, std::variant<
+            i32_t,
+            i64_t,
+            f32_t,
+            f64_t,
+            globalidx_t
+    >>;
+
+    struct local_t {
+        u32_t n;
+        valtype t;
+    };
+
+    struct func_t {
+        vec_t<local_t> locals;
+        expression_t exp;
+    };
+
+    struct code_t {
+        u32_t size;
+        func_t func;
     };
 }

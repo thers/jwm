@@ -8,6 +8,7 @@
 #include "sections/FunctionSection.h"
 #include "sections/TableSection.h"
 #include "sections/MemorySection.h"
+#include "sections/CodeSection.h"
 
 namespace wasm {
     class Module {
@@ -16,13 +17,9 @@ namespace wasm {
         std::unique_ptr<sections::FunctionSection> functionSection;
         std::unique_ptr<sections::TableSection> tableSection;
         std::unique_ptr<sections::MemorySection> memorySection;
-
-    protected:
-        bool is_valid;
+        std::unique_ptr<sections::CodeSection> codeSection;
 
     public:
-        Module(): is_valid(false) {}
-
         void parse(Reader& reader);
     };
 }

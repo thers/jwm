@@ -30,8 +30,8 @@ namespace wasm {
         it_globaltype = 0x03,
     };
 
-    enum blocktype : byte_t {
-        bt_empty = 0x40
+    enum resulttype : byte_t {
+        rt_empty = 0x40
     };
 
     enum mut : byte_t {
@@ -42,5 +42,13 @@ namespace wasm {
     enum limittype : byte_t {
         mt_infinite = 0x00,
         mt_finite = 0x01,
+    };
+
+    enum constinstrtype : byte_t {
+        cit_i32 = opcode::op_i32_const,
+        cit_i64 = opcode::op_i64_const,
+        cit_f32 = opcode::op_f32_const,
+        cit_f64 = opcode::op_f64_const,
+        cit_global_get = opcode::op_get_global,
     };
 }

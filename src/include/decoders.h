@@ -15,7 +15,7 @@ namespace wasm::decoders {
         do {
             byte = reader.next();
 
-            result |= (byte & 0x7f) << shift;
+            result |= (T)(byte & 0x7f) << shift;
 
             shift += 7;
         } while (byte & 0x80);
@@ -32,13 +32,17 @@ namespace wasm::decoders {
         do {
             byte = reader.next();
 
-            result |= (byte & 0x7f) << shift;
+            if (reader.eof()) {
+                return result;
+            }
+
+            result |= (static_cast<T>(byte & 0x7f)) << shift;
 
             shift += 7;
         } while (byte & 0x80);
 
-        if ((shift < (8 * sizeof(result))) && (byte & 0x40)) {
-            result |= (-1) << shift;
+        if ((shift < (8 * sizeof(T))) && (byte & 0x40)) {
+            result |= (static_cast<T>(~0)) << shift;
         }
 
         return result;
@@ -61,27 +65,39 @@ namespace wasm::decoders {
         return static_cast<T>(byte(reader));
     }
 
-    inline wasm::u32_t u32(Reader& reader) {
-        return unsignedInteger<wasm::u32_t>(reader);
+    inline u32_t u32(Reader& reader) {
+        return unsignedInteger<u32_t>(reader);
     }
 
-    inline wasm::u64_t u64(Reader& reader) {
-        return unsignedInteger<wasm::u64_t>(reader);
+    inline u64_t u64(Reader& reader) {
+        return unsignedInteger<u64_t>(reader);
     }
 
-    inline wasm::i32_t i32(Reader& reader) {
-        return signedInteger<wasm::i32_t>(reader);
+    inline u32_t i32(Reader& reader) {
+        return signedInteger<u32_t>(reader);
     }
 
-    inline wasm::i64_t i64(Reader& reader) {
-        return signedInteger<wasm::i64_t>(reader);
+    inline u64_t i64(Reader& reader) {
+        return signedInteger<u64_t>(reader);
+    }
+
+    inline u32_t f32(Reader& reader) {
+        reader.content(4);
+
+        return 0;
+    }
+
+    inline u64_t f64(Reader& reader) {
+        reader.content(8);
+
+        return 0;
     }
 
     template <typename T, typename F>
-    inline wasm::vec_t<T> vec(Reader& reader, F readVal) {
-        wasm::u32_t length = u32(reader);
+    inline vec_t<T> vec(Reader& reader, F readVal) {
+        u32_t length = u32(reader);
 
-        wasm::vec_t<T> result(length);
+        vec_t<T> result(length);
 
         for (std::size_t index = 0; index < length; index++) {
             result[index] = readVal();
@@ -90,28 +106,28 @@ namespace wasm::decoders {
         return result;
     }
 
-    inline wasm::memop_t memory(wasm::opcode op, Reader& reader) {
-        return {op, {u32(reader), u32(reader)}};
+    inline memop_arg_t memop_args(Reader& reader) {
+        return {u32(reader), u32(reader)};
     }
 
-    inline wasm::func_t functype(Reader& reader) {
-        auto funcbyte = byteEnumItem<wasm::type>(reader);
+    inline functype_t functype(Reader& reader) {
+        auto funcbyte = byteEnumItem<type>(reader);
 
-        if (funcbyte != wasm::type::t_functype) {
+        if (funcbyte != type::t_functype) {
             scream("\nAttempt to parse functype that isn't a functype\n");
         }
 
         auto readValtype = [&] () {
-            return byteEnumItem<wasm::valtype>(reader);
+            return byteEnumItem<valtype>(reader);
         };
 
-        auto parameterTypes = vec<wasm::valtype>(reader, readValtype);
-        auto resultTypes = vec<wasm::valtype>(reader, readValtype);
+        auto parameterTypes = vec<valtype>(reader, readValtype);
+        auto resultTypes = vec<valtype>(reader, readValtype);
 
         return {parameterTypes, resultTypes};
     }
 
-    inline wasm::name_t name(Reader& reader) {
+    inline name_t name(Reader& reader) {
         auto readByte = [&] () {
             return byte(reader);
         };
@@ -121,17 +137,17 @@ namespace wasm::decoders {
         return {bytes.begin(), bytes.end()};
     }
 
-    inline wasm::limit_t limit(Reader& reader) {
-        auto limittype = byteEnumItem<wasm::limittype>(reader);
+    inline limit_t limit(Reader& reader) {
+        auto type = byteEnumItem<wasm::limittype>(reader);
 
-        if (limittype == wasm::limittype::mt_finite) {
+        if (type == limittype::mt_finite) {
             return {true, u32(reader), u32(reader)};
         }
 
         return {false, u32(reader), 0};
     }
 
-    inline wasm::table_t table(Reader &reader) {
+    inline table_t table(Reader &reader) {
         auto elemtype = byte(reader);
 
         if (elemtype != 0x70) {
@@ -141,21 +157,186 @@ namespace wasm::decoders {
         return limit(reader);
     }
 
-    inline wasm::mem_t mem(Reader &reader) {
+    inline mem_t mem(Reader &reader) {
         return limit(reader);
     }
 
-    inline wasm::global_t global(Reader &reader) {
+    inline global_t global(Reader &reader) {
         auto valtype = byteEnumItem<wasm::valtype>(reader);
         auto mut = byteEnumItem<wasm::mut>(reader);
 
-        return {valtype, mut == wasm::mut::m_const};
+        return {valtype, mut == mut::m_const};
     }
 
-    inline wasm::section_t section(Reader& reader) {
+    inline section_t section(Reader& reader) {
         auto type = byteEnumItem<wasm::section>(reader);
         auto size = u32(reader);
 
         return {type, size};
+    }
+
+    inline result_t result(Reader& reader) {
+        auto resulttype = byteEnumItem<wasm::resulttype>(reader);
+
+        if (resulttype == wasm::resulttype::rt_empty) {
+            return {true};
+        }
+
+        return {false, byteEnumItem<wasm::valtype>(reader)};
+    }
+
+    inline br_table_arg_t br_table_arg(Reader& reader) {
+        auto readLabelidx = [&] () {
+            return decoders::u32(reader);
+        };
+
+        auto labels = decoders::vec<labelidx_t>(reader, readLabelidx);
+        labelidx_t labelidx = decoders::u32(reader);
+
+        return {labels, labelidx};
+    }
+
+    inline local_t local(Reader& reader) {
+        return {u32(reader), byteEnumItem<valtype>(reader)};
+    }
+
+    inline vec_t<local_t> locals(Reader& reader) {
+        auto readLocal = [&] () {
+            return local(reader);
+        };
+
+        return vec<local_t>(reader, readLocal);
+    }
+
+    template <typename F>
+    expr_t expr(Reader& reader, F decodeExpr) {
+        expr_t expression;
+
+        auto op = decoders::byteEnumItem<opcode>(reader);
+        instr_arg_t arg;
+
+        while (op != opcode::op_end) {
+            switch (op) {
+                case opcode::op_br:
+                case opcode::op_br_if:
+
+                case opcode::op_call:
+                case opcode::op_call_indirect:
+
+                case opcode::op_get_local:
+                case opcode::op_set_local:
+
+                case opcode::op_get_global:
+                case opcode::op_set_global:
+                    arg = instr_arg_t {decoders::u32(reader)};
+                    break;
+
+
+                case opcode::op_f32_load:
+                case opcode::op_f32_store:
+
+                case opcode::op_f64_load:
+                case opcode::op_f64_store:
+
+                case opcode::op_i32_load:
+                case opcode::op_i32_load_8_s:
+                case opcode::op_i32_load_8_u:
+                case opcode::op_i32_load_16_s:
+                case opcode::op_i32_load_16_u:
+                case opcode::op_i32_store:
+                case opcode::op_i32_store_8:
+                case opcode::op_i32_store_16:
+
+                case opcode::op_i64_load:
+                case opcode::op_i64_load_8_s:
+                case opcode::op_i64_load_8_u:
+                case opcode::op_i64_load_16_s:
+                case opcode::op_i64_load_16_u:
+                case opcode::op_i64_load_32_s:
+                case opcode::op_i64_load_32_u:
+                case opcode::op_i64_store:
+                case opcode::op_i64_store_8:
+                case opcode::op_i64_store_16:
+                case opcode::op_i64_store_32:
+                    arg = decoders::memop_args(reader);
+                    break;
+
+
+                case opcode::op_i32_const:
+                    arg = decoders::i32(reader);
+                    break;
+                case opcode::op_i64_const:
+                    arg = decoders::i64(reader);
+                    break;
+                case opcode::op_f32_const:
+                    arg = decoders::f32(reader);
+                    break;
+                case opcode::op_f64_const:
+                    arg = decoders::f64(reader);
+                    break;
+
+
+                case opcode::op_block:
+                case opcode::op_loop:
+                case opcode::op_if:
+                    arg = decodeExpr(true, decodeExpr);
+                    break;
+
+                case opcode::op_else:
+                    arg = decodeExpr(false, decodeExpr);
+                    break;
+
+
+                case opcode::op_br_table:
+                    arg = decoders::br_table_arg(reader);
+                    break;
+
+
+                default:
+                    break;
+            }
+
+            expression.push_back({op, arg});
+
+            op = decoders::byteEnumItem<opcode>(reader);
+        }
+
+        return expression;
+    }
+
+    static expression_t expression(Reader& reader) {
+        expression_t exp;
+
+        auto decodeExpr = [&] (bool withResult, auto decodeNestedExpr) {
+            u32_t idx = exp.blocks.size();
+
+            if (withResult) {
+                exp.blocks.push_back({decoders::result(reader), expr(reader, decodeNestedExpr)});
+            } else {
+                exp.blocks.push_back({default_result_t, expr(reader, decodeNestedExpr)});
+            }
+
+            return idx;
+        };
+
+        exp.main = expr(reader, decodeExpr);
+
+        return exp;
+    }
+
+    inline func_t func(Reader& reader) {
+        auto locals_ = locals(reader);
+        print("expr at 0x%08X\n", reader.get_pos());
+        auto expr_ = expression(reader);
+
+        return {locals_, expr_};
+    }
+
+    inline code_t code(Reader& reader) {
+        auto size = u32(reader);
+        print("func at 0x%08X\n", reader.get_pos());
+        auto func_ = func(reader);
+
+        return {size, func_};
     }
 }

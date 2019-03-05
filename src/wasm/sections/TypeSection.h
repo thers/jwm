@@ -7,14 +7,14 @@
 namespace wasm::sections {
     class TypeSection {
     public:
-        wasm::vec_t<wasm::func_t> funcs;
+        wasm::vec_t<wasm::functype_t> funcs;
 
-        TypeSection(wasm::Reader& reader) {
+        explicit TypeSection(wasm::Reader& reader) {
             auto readFuncdecl = [&] () {
                 return wasm::decoders::functype(reader);
             };
 
-            funcs = wasm::decoders::vec<wasm::func_t>(reader, readFuncdecl);
+            funcs = wasm::decoders::vec<wasm::functype_t>(reader, readFuncdecl);
         }
     };
 }
