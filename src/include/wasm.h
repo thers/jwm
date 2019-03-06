@@ -137,8 +137,8 @@ namespace wasm {
     };
 
     struct memop_arg_t {
-        u32_t offset;
         u32_t align;
+        u32_t offset;
     };
 
     using br_table_arg_t = std::pair<vec_t<labelidx_t>, labelidx_t>;

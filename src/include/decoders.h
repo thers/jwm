@@ -216,6 +216,8 @@ namespace wasm::decoders {
                 case opcode::op_call:
                 case opcode::op_call_indirect:
 
+                case opcode::op_tee_local:
+
                 case opcode::op_get_local:
                 case opcode::op_set_local:
 
