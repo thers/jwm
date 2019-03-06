@@ -73,24 +73,24 @@ namespace wasm::decoders {
         return unsignedInteger<u64_t>(reader);
     }
 
-    inline u32_t i32(Reader& reader) {
-        return signedInteger<u32_t>(reader);
+    inline i32_t i32(Reader& reader) {
+        return signedInteger<i32_t>(reader);
     }
 
-    inline u64_t i64(Reader& reader) {
-        return signedInteger<u64_t>(reader);
+    inline i64_t i64(Reader& reader) {
+        return signedInteger<i64_t>(reader);
     }
 
-    inline u32_t f32(Reader& reader) {
-        reader.content(4);
+    inline f32_t f32(Reader& reader) {
+        auto bytes = reader.content(sizeof(f32_t));
 
-        return 0;
+        return *reinterpret_cast<f32_t *>(bytes.data());
     }
 
-    inline u64_t f64(Reader& reader) {
-        reader.content(8);
+    inline f64_t f64(Reader& reader) {
+        auto bytes = reader.content(sizeof(f64_t));
 
-        return 0;
+        return *reinterpret_cast<f64_t *>(bytes.data());
     }
 
     template <typename T, typename F>
@@ -176,13 +176,7 @@ namespace wasm::decoders {
     }
 
     inline result_t result(Reader& reader) {
-        auto resulttype = byteEnumItem<wasm::resulttype>(reader);
-
-        if (resulttype == wasm::resulttype::rt_empty) {
-            return {true};
-        }
-
-        return {false, byteEnumItem<wasm::valtype>(reader)};
+        return {byteEnumItem<wasm::valtype>(reader)};
     }
 
     inline br_table_arg_t br_table_arg(Reader& reader) {
@@ -208,8 +202,7 @@ namespace wasm::decoders {
         return vec<local_t>(reader, readLocal);
     }
 
-    template <typename F>
-    expr_t expr(Reader& reader, F decodeExpr) {
+    static expr_t expr(Reader& reader) {
         expr_t expression;
 
         auto op = decoders::byteEnumItem<opcode>(reader);
@@ -279,11 +272,7 @@ namespace wasm::decoders {
                 case opcode::op_block:
                 case opcode::op_loop:
                 case opcode::op_if:
-                    arg = decodeExpr(true, decodeExpr);
-                    break;
-
-                case opcode::op_else:
-                    arg = decodeExpr(false, decodeExpr);
+                    arg = decoders::result(reader);
                     break;
 
 
@@ -293,6 +282,7 @@ namespace wasm::decoders {
 
 
                 default:
+                    arg = NULL;
                     break;
             }
 
@@ -304,39 +294,11 @@ namespace wasm::decoders {
         return expression;
     }
 
-    static expression_t expression(Reader& reader) {
-        expression_t exp;
-
-        auto decodeExpr = [&] (bool withResult, auto decodeNestedExpr) {
-            u32_t idx = exp.blocks.size();
-
-            if (withResult) {
-                exp.blocks.push_back({decoders::result(reader), expr(reader, decodeNestedExpr)});
-            } else {
-                exp.blocks.push_back({default_result_t, expr(reader, decodeNestedExpr)});
-            }
-
-            return idx;
-        };
-
-        exp.main = expr(reader, decodeExpr);
-
-        return exp;
-    }
-
     inline func_t func(Reader& reader) {
-        auto locals_ = locals(reader);
-        print("expr at 0x%08X\n", reader.get_pos());
-        auto expr_ = expression(reader);
-
-        return {locals_, expr_};
+        return {locals(reader), expr(reader)};
     }
 
     inline code_t code(Reader& reader) {
-        auto size = u32(reader);
-        print("func at 0x%08X\n", reader.get_pos());
-        auto func_ = func(reader);
-
-        return {size, func_};
+        return {u32(reader), func(reader)};
     }
 }

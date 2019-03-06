@@ -17,6 +17,7 @@ namespace wasm {
     };
 
     enum valtype : byte_t {
+        vt_empty = type::t_result,
         vt_i32 = type::t_i32,
         vt_i64 = type::t_i64,
         vt_f32 = type::t_f32,

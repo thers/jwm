@@ -121,12 +121,15 @@ namespace wasm {
         }
     };
 
-    struct result_t {
+    class result_t {
+    public:
         bool empty;
         valtype type;
+
+        result_t(valtype t): empty(t == valtype::vt_empty), type(t) {}
     };
 
-    inline result_t default_result_t;
+    inline result_t default_result_t(valtype::vt_empty);
 
     struct section_t {
         section type;
@@ -144,6 +147,11 @@ namespace wasm {
             nullptr_t,
             u32_t,
             u64_t,
+            i32_t,
+            i64_t,
+            f32_t,
+            f64_t,
+            result_t,
             memop_arg_t,
             br_table_arg_t
     >;
@@ -156,11 +164,6 @@ namespace wasm {
     struct block_t {
         result_t result;
         expr_t exp;
-    };
-
-    struct expression_t {
-        expr_t main;
-        vec_t<block_t> blocks;
     };
 
     using constexpression_t = std::pair<constinstrtype, std::variant<
@@ -178,7 +181,7 @@ namespace wasm {
 
     struct func_t {
         vec_t<local_t> locals;
-        expression_t exp;
+        expr_t exp;
     };
 
     struct code_t {
