@@ -202,6 +202,44 @@ namespace wasm::decoders {
         return vec<local_t>(reader, readLocal);
     }
 
+    static constexpr_t constexprd(Reader& reader) {
+        constexpr_t constexpression;
+
+        auto op = decoders::byteEnumItem<constinstrtype>(reader);
+        constinstr_arg_t arg;
+
+        while (op != constinstrtype::cit_end) {
+            switch (op) {
+                case constinstrtype::cit_i32:
+                    arg = decoders::i32(reader);
+                    break;
+                case constinstrtype::cit_i64:
+                    arg = decoders::i64(reader);
+                    break;
+                case constinstrtype::cit_f32:
+                    arg = decoders::f32(reader);
+                    break;
+                case constinstrtype::cit_f64:
+                    arg = decoders::f64(reader);
+                    break;
+
+                case constinstrtype::cit_global_get:
+                    arg = constinstr_arg_t {decoders::u32(reader)};
+                    break;
+
+                default:
+                    scream("Unknown constexpr opcode");
+                    break;
+            }
+
+            constexpression.push_back({op, arg});
+
+            op = decoders::byteEnumItem<constinstrtype>(reader);
+        }
+
+        return constexpression;
+    }
+
     static expr_t expr(Reader& reader) {
         expr_t expression;
 

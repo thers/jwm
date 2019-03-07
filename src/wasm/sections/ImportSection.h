@@ -20,19 +20,19 @@ namespace wasm::sections {
 
                 switch (import.type) {
                     case wasm::importtype::it_typeidx:
-                        import.x = decoders::u32(reader);
+                        import.val = decoders::u32(reader);
                         break;
 
                     case wasm::importtype::it_tabletype:
-                        import.tt = wasm::decoders::table(reader);
+                        import.val = wasm::decoders::table(reader);
                         break;
 
                     case wasm::importtype::it_memtype:
-                        import.mt = wasm::decoders::mem(reader);
+                        import.val = wasm::decoders::mem(reader);
                         break;
 
                     case wasm::importtype::it_globaltype:
-                        import.gt = wasm::decoders::global(reader);
+                        import.val = wasm::decoders::global(reader);
                         break;
                 }
 

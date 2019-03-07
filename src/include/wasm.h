@@ -65,16 +65,17 @@ namespace wasm {
     inline constexpr u32_t table_limit_max = std::numeric_limits<u32_t>::max();
     inline constexpr u32_t mem_limit_max = std::numeric_limits<uint16_t>::max();
 
+    using importdesc_val_t = std::variant<
+            index_t,
+            limit_t,
+            global_t
+    >;
     struct importdesc_t {
         name_t module;
         name_t nm;
 
         importtype type;
-
-        typeidx_t x;
-        table_t tt;
-        mem_t mt;
-        global_t gt;
+        importdesc_val_t val;
     };
 
     struct exportdesc_t {
@@ -171,13 +172,18 @@ namespace wasm {
         expr_t exp;
     };
 
-    using constexpression_t = std::pair<constinstrtype, std::variant<
+    using constinstr_arg_t = std::variant<
             i32_t,
             i64_t,
             f32_t,
             f64_t,
             globalidx_t
-    >>;
+    >;
+    struct constinstr_t {
+        constinstrtype op;
+        constinstr_arg_t arg;
+    };
+    using constexpr_t = vec_t<constinstr_t>;
 
     struct local_t {
         u32_t n;

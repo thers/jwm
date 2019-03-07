@@ -53,6 +53,7 @@ namespace wasm {
     };
 
     enum constinstrtype : byte_t {
+        cit_end = opcode::op_end,
         cit_i32 = opcode::op_i32_const,
         cit_i64 = opcode::op_i64_const,
         cit_f32 = opcode::op_f32_const,

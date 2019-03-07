@@ -46,6 +46,10 @@ namespace wasm {
                 case wasm::section::s_code:
                     codeSection = std::make_unique<sections::CodeSection>(reader);
                     break;
+
+                case wasm::section::s_start:
+                    startSection = std::make_unique<sections::StartSection>(reader);
+                    break;
             }
 
             print("done.\n");

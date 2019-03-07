@@ -10,6 +10,7 @@
 #include "sections/MemorySection.h"
 #include "sections/ExportSection.h"
 #include "sections/CodeSection.h"
+#include "sections/StartSection.h"
 
 namespace wasm {
     class Module {
@@ -20,6 +21,7 @@ namespace wasm {
         std::unique_ptr<sections::MemorySection> memorySection;
         std::unique_ptr<sections::ExportSection> exportSection;
         std::unique_ptr<sections::CodeSection> codeSection;
+        std::unique_ptr<sections::StartSection> startSection;
 
     public:
         void parse(Reader& reader);
