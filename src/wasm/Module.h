@@ -8,6 +8,7 @@
 #include "sections/FunctionSection.h"
 #include "sections/TableSection.h"
 #include "sections/MemorySection.h"
+#include "sections/ExportSection.h"
 #include "sections/CodeSection.h"
 
 namespace wasm {
@@ -17,6 +18,7 @@ namespace wasm {
         std::unique_ptr<sections::FunctionSection> functionSection;
         std::unique_ptr<sections::TableSection> tableSection;
         std::unique_ptr<sections::MemorySection> memorySection;
+        std::unique_ptr<sections::ExportSection> exportSection;
         std::unique_ptr<sections::CodeSection> codeSection;
 
     public:

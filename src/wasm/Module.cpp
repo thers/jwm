@@ -39,6 +39,10 @@ namespace wasm {
                     memorySection = std::make_unique<sections::MemorySection>(reader);
                     break;
 
+                case wasm::section::s_export:
+                    exportSection = std::make_unique<sections::ExportSection>(reader);
+                    break;
+
                 case wasm::section::s_code:
                     codeSection = std::make_unique<sections::CodeSection>(reader);
                     break;

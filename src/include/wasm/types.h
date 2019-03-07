@@ -31,6 +31,13 @@ namespace wasm {
         it_globaltype = 0x03,
     };
 
+    enum exporttype : byte_t {
+        et_funcidx = 0x00,
+        et_tableidx = 0x01,
+        et_memidx = 0x02,
+        et_globalidx = 0x03,
+    };
+
     enum resulttype : byte_t {
         rt_empty = 0x40
     };

@@ -77,6 +77,13 @@ namespace wasm {
         global_t gt;
     };
 
+    struct exportdesc_t {
+        name_t nm;
+
+        exporttype type;
+        index_t idx;
+    };
+
     inline const u32_t magicNumber = 0x0061736d;
     inline const u32_t versionNumber = 0x01000000;
 
@@ -128,8 +135,6 @@ namespace wasm {
 
         result_t(valtype t): empty(t == valtype::vt_empty), type(t) {}
     };
-
-    inline result_t default_result_t(valtype::vt_empty);
 
     struct section_t {
         section type;
