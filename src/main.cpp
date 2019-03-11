@@ -12,12 +12,10 @@ int main(int argc, char** argv) {
     auto moduleContent = jwmio::readModule(argv[1]);
 
     wasm::Reader reader(moduleContent);
-    wasm::Module module;
+    wasm::Module module(reader);
 
     print("\n");
     printbv(moduleContent);
-
-    module.parse(reader);
 
     return 0;
 }

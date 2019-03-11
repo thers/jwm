@@ -97,13 +97,24 @@ namespace wasm::decoders {
     inline vec_t<T> vec(Reader& reader, F readVal) {
         u32_t length = u32(reader);
 
-        vec_t<T> result(length);
+        vec_t<T> result;
+        result.reserve(length);
 
         for (std::size_t index = 0; index < length; index++) {
-            result[index] = readVal();
+            result.push_back(readVal(reader));
         }
 
         return result;
+    }
+
+    template <typename T, typename F>
+    inline void vec2(T *result, Reader& reader, F readVal) {
+        u32_t length = u32(reader);
+        result->reserve(length);
+
+        for (std::size_t index = 0; index < length; index++) {
+            result->push_back(readVal(reader));
+        }
     }
 
     inline memop_arg_t memop_args(Reader& reader) {
@@ -117,7 +128,7 @@ namespace wasm::decoders {
             scream("\nAttempt to parse functype that isn't a functype\n");
         }
 
-        auto readValtype = [&] () {
+        auto readValtype = [] (Reader& reader) {
             return byteEnumItem<valtype>(reader);
         };
 
@@ -128,7 +139,7 @@ namespace wasm::decoders {
     }
 
     inline name_t name(Reader& reader) {
-        auto readByte = [&] () {
+        auto readByte = [] (Reader& reader) {
             return byte(reader);
         };
 
@@ -180,7 +191,7 @@ namespace wasm::decoders {
     }
 
     inline br_table_arg_t br_table_arg(Reader& reader) {
-        auto readLabelidx = [&] () {
+        auto readLabelidx = [] (Reader& reader) {
             return decoders::u32(reader);
         };
 
@@ -195,7 +206,7 @@ namespace wasm::decoders {
     }
 
     inline vec_t<local_t> locals(Reader& reader) {
-        auto readLocal = [&] () {
+        auto readLocal = [] (Reader& reader) {
             return local(reader);
         };
 

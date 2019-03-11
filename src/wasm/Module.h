@@ -2,28 +2,31 @@
 
 #include <stdin.h>
 #include <wasm.h>
+#include <decoders.h>
 
-#include "sections/TypeSection.h"
-#include "sections/ImportSection.h"
-#include "sections/FunctionSection.h"
-#include "sections/TableSection.h"
-#include "sections/MemorySection.h"
-#include "sections/ExportSection.h"
-#include "sections/CodeSection.h"
-#include "sections/StartSection.h"
+using namespace std;
 
 namespace wasm {
+    using module_types_t = vec_t<functype_t>;
+    using module_imports_t = vec_t<importdesc_t>;
+    using module_functions_t = vec_t<u32_t>;
+    using module_tables_t = vec_t<table_t>;
+    using module_memories_t = vec_t<mem_t>;
+    using module_exports_t = vec_t<exportdesc_t>;
+    using module_codes_t = vec_t<code_t>;
+    using module_start_t = u32_t;
+
     class Module {
-        std::unique_ptr<sections::TypeSection> typeSection;
-        std::unique_ptr<sections::ImportSection> importSection;
-        std::unique_ptr<sections::FunctionSection> functionSection;
-        std::unique_ptr<sections::TableSection> tableSection;
-        std::unique_ptr<sections::MemorySection> memorySection;
-        std::unique_ptr<sections::ExportSection> exportSection;
-        std::unique_ptr<sections::CodeSection> codeSection;
-        std::unique_ptr<sections::StartSection> startSection;
+        module_types_t types;
+        module_imports_t imports;
+        module_functions_t functions;
+        module_tables_t tables;
+        module_memories_t memories;
+        module_exports_t exports;
+        module_codes_t codes;
+        module_start_t start;
 
     public:
-        void parse(Reader& reader);
+        Module(Reader& reader);
     };
 }

@@ -1,7 +1,75 @@
 #include "Module.h"
 
+using namespace std;
+
 namespace wasm {
-    void Module::parse(Reader &reader) {
+    inline auto readFuncdecl = [] (Reader& reader) {
+        return decoders::functype(reader);
+    };
+
+    inline auto readImport = [] (Reader& reader) {
+        importdesc_t import;
+
+        import.module = decoders::name(reader);
+        import.nm = decoders::name(reader);
+
+        import.type = decoders::byteEnumItem<importtype>(reader);
+
+        switch (import.type) {
+            case importtype::it_typeidx:
+                import.val = decoders::u32(reader);
+                break;
+
+            case importtype::it_tabletype:
+                import.val = decoders::table(reader);
+                break;
+
+            case importtype::it_memtype:
+                import.val = decoders::mem(reader);
+                break;
+
+            case importtype::it_globaltype:
+                import.val = decoders::global(reader);
+                break;
+        }
+
+        return import;
+    };
+
+    inline auto readTypeidx = [] (Reader& reader) {
+        return decoders::u32(reader);
+    };
+
+    inline auto readTable = [] (Reader& reader) {
+        return decoders::table(reader);
+    };
+
+    inline auto readMemory = [] (Reader& reader) {
+        return decoders::mem(reader);
+    };
+
+    inline auto readExport = [] (Reader& reader) {
+        auto nm = decoders::name(reader);
+        auto type = decoders::byteEnumItem<exporttype>(reader);
+        auto idx = decoders::u32(reader);
+
+        return exportdesc_t {nm, type, idx};
+    };
+
+    inline auto readCode = [] (Reader& reader) {
+        return decoders::code(reader);
+    };
+
+    Module::Module(Reader &reader):
+            types(),
+            imports(),
+            functions(),
+            tables(),
+            memories(),
+            exports(),
+            codes(),
+            start(0)
+    {
         if (decoders::reinterpretBytes<u32_t>(reader) != magicNumber) {
             scream("Magic number is invalid\n");
         }
@@ -20,35 +88,35 @@ namespace wasm {
 
             switch (type) {
                 case wasm::section::s_type:
-                    typeSection = std::make_unique<sections::TypeSection>(reader);
+                    decoders::vec2<module_types_t>(&types, reader, readFuncdecl);
                     break;
 
                 case wasm::section::s_import:
-                    importSection = std::make_unique<sections::ImportSection>(reader);
+                    decoders::vec2<module_imports_t>(&imports, reader, readImport);
                     break;
 
                 case wasm::section::s_function:
-                    functionSection = std::make_unique<sections::FunctionSection>(reader);
+                    decoders::vec2<module_functions_t>(&functions, reader, readTypeidx);
                     break;
 
                 case wasm::section::s_table:
-                    tableSection = std::make_unique<sections::TableSection>(reader);
+                    decoders::vec2<module_tables_t>(&tables, reader, readTable);
                     break;
 
                 case wasm::section::s_memory:
-                    memorySection = std::make_unique<sections::MemorySection>(reader);
+                    decoders::vec2<module_memories_t>(&memories, reader, readMemory);
                     break;
 
                 case wasm::section::s_export:
-                    exportSection = std::make_unique<sections::ExportSection>(reader);
+                    decoders::vec2<module_exports_t>(&exports, reader, readExport);
                     break;
 
                 case wasm::section::s_code:
-                    codeSection = std::make_unique<sections::CodeSection>(reader);
+                    decoders::vec2<module_codes_t>(&codes, reader, readCode);
                     break;
 
                 case wasm::section::s_start:
-                    startSection = std::make_unique<sections::StartSection>(reader);
+                    start = decoders::u32(reader);
                     break;
             }
 
