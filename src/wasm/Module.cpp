@@ -71,6 +71,13 @@ namespace wasm {
                 case section::s_global:
                     decoders::vec2<module_globals_t>(&globals, reader, decoders::globaldesc);
                     break;
+
+                case section::s_data:
+                    decoders::vec2<module_datas_t>(&datas, reader, decoders::data);
+                    break;
+
+                default:
+                    break;
             }
 
             print("done.\n");

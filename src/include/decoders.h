@@ -121,6 +121,10 @@ namespace wasm::decoders {
         return u32(reader);
     };
 
+    inline content_t bytesVec(Reader& reader) {
+        return vec<byte_t>(reader, readByte);
+    }
+
     inline memop_arg_t memop_args(Reader& reader) {
         return {u32(reader), u32(reader)};
     }
@@ -408,5 +412,13 @@ namespace wasm::decoders {
         }
 
         return {module, name_, type, val};
+    }
+
+    inline data_t data(Reader& reader) {
+        auto data = u32(reader);
+        auto offset = constexprd(reader);
+        auto init = bytesVec(reader);
+
+        return {data, offset, init};
     }
 }

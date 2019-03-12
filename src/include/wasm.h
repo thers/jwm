@@ -211,4 +211,10 @@ namespace wasm {
         global_t type;
         constexpr_t init;
     };
+
+    struct data_t {
+        index_t data;
+        constexpr_t offset;
+        content_t init;
+    };
 }

@@ -17,6 +17,7 @@ namespace wasm {
     using module_start_t = u32_t;
     using module_elements_t = vec_t<element_t>;
     using module_globals_t = vec_t<globaldesc_t>;
+    using module_datas_t = vec_t<data_t>;
 
     class Module {
         module_types_t types;
@@ -24,11 +25,12 @@ namespace wasm {
         module_functions_t functions;
         module_tables_t tables;
         module_memories_t memories;
+        module_globals_t globals;
         module_exports_t exports;
-        module_codes_t codes;
         module_start_t start;
         module_elements_t elements;
-        module_globals_t globals;
+        module_codes_t codes;
+        module_datas_t datas;
 
     public:
         Module(Reader& reader);
