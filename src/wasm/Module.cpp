@@ -60,6 +60,10 @@ namespace wasm {
         return decoders::code(reader);
     };
 
+    inline auto readElement = [] (Reader& reader) {
+        return decoders::element(reader);
+    };
+
     Module::Module(Reader &reader):
             types(),
             imports(),
@@ -68,7 +72,8 @@ namespace wasm {
             memories(),
             exports(),
             codes(),
-            start(0)
+            start(0),
+            elements()
     {
         if (decoders::reinterpretBytes<u32_t>(reader) != magicNumber) {
             scream("Magic number is invalid\n");
@@ -117,6 +122,10 @@ namespace wasm {
 
                 case wasm::section::s_start:
                     start = decoders::u32(reader);
+                    break;
+
+                case wasm::section::s_element:
+                    decoders::vec2<module_element_t>(&elements, reader, readElement);
                     break;
             }
 

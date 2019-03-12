@@ -117,6 +117,10 @@ namespace wasm::decoders {
         }
     }
 
+    inline auto readByte = [] (Reader& reader) {
+        return u32(reader);
+    };
+
     inline memop_arg_t memop_args(Reader& reader) {
         return {u32(reader), u32(reader)};
     }
@@ -255,6 +259,7 @@ namespace wasm::decoders {
         expr_t expression;
 
         auto op = decoders::byteEnumItem<opcode>(reader);
+        auto opname = opcode_names[op];
         instr_arg_t arg;
 
         while (op != opcode::op_end) {
@@ -337,9 +342,10 @@ namespace wasm::decoders {
                     break;
             }
 
-            expression.push_back({op, arg});
+            expression.push_back({op, opname, arg});
 
             op = decoders::byteEnumItem<opcode>(reader);
+            opname = opcode_names[op];
         }
 
         return expression;
@@ -351,5 +357,13 @@ namespace wasm::decoders {
 
     inline code_t code(Reader& reader) {
         return {u32(reader), func(reader)};
+    }
+
+    inline element_t element(Reader& reader) {
+        auto table = u32(reader);
+        auto offset = constexprd(reader);
+        auto init = vec<index_t>(reader, readByte);
+
+        return {table, offset, init};
     }
 }

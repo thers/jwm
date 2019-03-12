@@ -163,6 +163,7 @@ namespace wasm {
     >;
     struct instr_t {
         opcode op;
+        name_t opname;
         instr_arg_t arg;
     };
 
@@ -198,5 +199,11 @@ namespace wasm {
     struct code_t {
         u32_t size;
         func_t func;
+    };
+
+    struct element_t {
+        index_t table;
+        constexpr_t offset;
+        vec_t<index_t> init;
     };
 }
