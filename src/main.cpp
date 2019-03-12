@@ -9,11 +9,13 @@
 #include <wasm.h>
 #include <runtime/Module.h>
 
+using namespace std;
+
 // jit! https://github.com/herumi/xbyak/tree/master/xbyak
 // wasm2wat https://cdn.rawgit.com/WebAssembly/wabt/fb986fbd/demo/wasm2wat/
 // wat2wasm https://cdn.rawgit.com/WebAssembly/wabt/fb986fbd/demo/wat2wasm/
 
-std::vector<uint8_t> readModule(char *path);
+wasm::content_t readModule(char *path);
 
 int main(int argc, char** argv) {
     auto moduleContent = readModule(argv[1]);
@@ -21,17 +23,17 @@ int main(int argc, char** argv) {
     wasm::Reader reader(moduleContent);
     runtime::Module module(reader);
 
-    print("\n");
     printbv(moduleContent);
 
     return 0;
 }
 
-std::vector<uint8_t> readModule(char *path) {
-    std::ifstream file(path, std::ios::in|std::ios::binary);
-    file.unsetf(std::ios::skipws);
+wasm::content_t readModule(char *path) {
+    ifstream file(path, ios::in|ios::binary);
+    file.unsetf(ios::skipws);
 
-    std::istream_iterator<uint8_t> begin(file), end;
+    istream_iterator<byte_t> begin(file);
+    istream_iterator<byte_t> end;
 
-    return std::vector<uint8_t> (begin, end);
+    return {begin, end};
 }

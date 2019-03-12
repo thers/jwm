@@ -12,9 +12,9 @@ namespace runtime {
 
         while (!reader.eof()) {
             auto [type, size] = decoders::section(reader);
-            auto pos_before = reader.get_pos();
+            auto pos_before = reader.getPos();
 
-            reader.safe_until(pos_before + size);
+            reader.setSafeUntil(pos_before + size);
 
             switch (type) {
                 case section::s_type:
@@ -65,7 +65,7 @@ namespace runtime {
                     break;
             }
 
-            reader.seek_to(pos_before + size);
+            reader.seekTo(pos_before + size);
         }
     }
 }
