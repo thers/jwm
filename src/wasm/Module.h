@@ -27,10 +27,10 @@ namespace wasm {
         module_memories_t memories;
         module_globals_t globals;
         module_exports_t exports;
-        module_start_t start;
         module_elements_t elements;
         module_codes_t codes;
         module_datas_t datas;
+        module_start_t start = 0;
 
     public:
         Module(Reader& reader);

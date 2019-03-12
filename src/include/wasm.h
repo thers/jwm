@@ -58,7 +58,7 @@ namespace wasm {
     using mem_t = limit_t;
 
     struct global_t {
-        valtype value_type;
+        valtype val;
         bool is_mutable;
     };
 
@@ -79,7 +79,7 @@ namespace wasm {
     };
 
     struct exportdesc_t {
-        name_t nm;
+        name_t export_name;
 
         exporttype type;
         index_t idx;
@@ -96,6 +96,21 @@ namespace wasm {
         pos_t size;
         pos_t pos;
 
+        bool safeMode = false;
+        pos_t maxSafePos;
+
+        void checkIfSafe() {
+            if (safeMode && (pos + 1) > maxSafePos) {
+                scream("Reader safe mode boundaries violation");
+            }
+        }
+
+        void checkIfSafe(pos_t length) {
+            if (safeMode && (pos + length) > maxSafePos) {
+                scream("Reader safe mode boundaries violation");
+            }
+        }
+
     public:
         Reader(const content_t c): data(c), size(c.size()), pos(0) {}
 
@@ -103,23 +118,29 @@ namespace wasm {
             return pos >= size;
         }
 
+        void safe_until(pos_t pos) {
+            safeMode = true;
+            maxSafePos = pos;
+        }
+
         pos_t get_pos() {
             return pos;
         }
 
-        content_t get_content() {
-            return {data.begin() + pos,data.end()};
-        }
-
         byte_t next() {
+            checkIfSafe();
+
             return data[pos++];
         }
 
         void seek_to(pos_t p) {
+            safeMode = false;
             pos = p;
         }
 
         content_t content(int length) {
+            checkIfSafe(length);
+
             auto from = data.begin() + pos;
             auto to = from + length;
 
@@ -168,10 +189,6 @@ namespace wasm {
     };
 
     using expr_t = vec_t<instr_t>;
-    struct block_t {
-        result_t result;
-        expr_t exp;
-    };
 
     using constinstr_arg_t = std::variant<
             i32_t,
@@ -187,8 +204,8 @@ namespace wasm {
     using constexpr_t = vec_t<constinstr_t>;
 
     struct local_t {
-        u32_t n;
-        valtype t;
+        u32_t num_locals;
+        valtype type;
     };
 
     struct func_t {

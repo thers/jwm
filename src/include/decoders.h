@@ -7,23 +7,6 @@
 
 namespace wasm::decoders {
     template <typename T>
-    T unsignedInteger(Reader& reader) {
-        T result = 0;
-        int shift = 0;
-        byte_t byte;
-
-        do {
-            byte = reader.next();
-
-            result |= (T)(byte & 0x7f) << shift;
-
-            shift += 7;
-        } while (byte & 0x80);
-
-        return result;
-    }
-
-    template <typename T>
     T signedInteger(Reader& reader) {
         T result = 0;
         int shift = 0;
@@ -66,11 +49,19 @@ namespace wasm::decoders {
     }
 
     inline u32_t u32(Reader& reader) {
-        return unsignedInteger<u32_t>(reader);
-    }
+        u32_t result = 0;
+        u32_t shift = 0;
+        byte_t byte;
 
-    inline u64_t u64(Reader& reader) {
-        return unsignedInteger<u64_t>(reader);
+        do {
+            byte = reader.next();
+
+            result |= static_cast<u32_t>(byte & 0x7f) << shift;
+
+            shift += 7;
+        } while (byte & 0x80);
+
+        return result;
     }
 
     inline i32_t i32(Reader& reader) {
@@ -117,12 +108,8 @@ namespace wasm::decoders {
         }
     }
 
-    inline auto readByte = [] (Reader& reader) {
-        return u32(reader);
-    };
-
     inline content_t bytesVec(Reader& reader) {
-        return vec<byte_t>(reader, readByte);
+        return vec<byte_t>(reader, byte);
     }
 
     inline memop_arg_t memop_args(Reader& reader) {
@@ -147,11 +134,7 @@ namespace wasm::decoders {
     }
 
     inline name_t name(Reader& reader) {
-        auto readByte = [] (Reader& reader) {
-            return byte(reader);
-        };
-
-        auto bytes = vec<byte_t>(reader, readByte);
+        auto bytes = vec<byte_t>(reader, byte);
 
         return {bytes.begin(), bytes.end()};
     }
@@ -199,11 +182,7 @@ namespace wasm::decoders {
     }
 
     inline br_table_arg_t br_table_arg(Reader& reader) {
-        auto readLabelidx = [] (Reader& reader) {
-            return decoders::u32(reader);
-        };
-
-        auto labels = decoders::vec<labelidx_t>(reader, readLabelidx);
+        auto labels = decoders::vec<labelidx_t>(reader, u32);
         labelidx_t labelidx = decoders::u32(reader);
 
         return {labels, labelidx};
@@ -214,36 +193,32 @@ namespace wasm::decoders {
     }
 
     inline vec_t<local_t> locals(Reader& reader) {
-        auto readLocal = [] (Reader& reader) {
-            return local(reader);
-        };
-
-        return vec<local_t>(reader, readLocal);
+        return vec<local_t>(reader, local);
     }
 
     static constexpr_t constexprd(Reader& reader) {
         constexpr_t constexpression;
 
-        auto op = decoders::byteEnumItem<constinstrtype>(reader);
+        auto op = byteEnumItem<constinstrtype>(reader);
         constinstr_arg_t arg;
 
         while (op != constinstrtype::cit_end) {
             switch (op) {
                 case constinstrtype::cit_i32:
-                    arg = decoders::i32(reader);
+                    arg = i32(reader);
                     break;
                 case constinstrtype::cit_i64:
-                    arg = decoders::i64(reader);
+                    arg = i64(reader);
                     break;
                 case constinstrtype::cit_f32:
-                    arg = decoders::f32(reader);
+                    arg = f32(reader);
                     break;
                 case constinstrtype::cit_f64:
-                    arg = decoders::f64(reader);
+                    arg = f64(reader);
                     break;
 
                 case constinstrtype::cit_global_get:
-                    arg = constinstr_arg_t {decoders::u32(reader)};
+                    arg = constinstr_arg_t {u32(reader)};
                     break;
 
                 default:
@@ -262,11 +237,15 @@ namespace wasm::decoders {
     static expr_t expr(Reader& reader) {
         expr_t expression;
 
-        auto op = decoders::byteEnumItem<opcode>(reader);
+        auto op = byteEnumItem<opcode>(reader);
         auto opname = opcode_names[op];
         instr_arg_t arg;
 
         while (op != opcode::op_end) {
+            if (!opname) {
+                scream("Unknown opcode");
+            }
+
             switch (op) {
                 case opcode::op_br:
                 case opcode::op_br_if:
@@ -281,7 +260,7 @@ namespace wasm::decoders {
 
                 case opcode::op_get_global:
                 case opcode::op_set_global:
-                    arg = instr_arg_t {decoders::u32(reader)};
+                    arg = instr_arg_t {u32(reader)};
                     break;
 
 
@@ -311,33 +290,33 @@ namespace wasm::decoders {
                 case opcode::op_i64_store_8:
                 case opcode::op_i64_store_16:
                 case opcode::op_i64_store_32:
-                    arg = decoders::memop_args(reader);
+                    arg = memop_args(reader);
                     break;
 
 
                 case opcode::op_i32_const:
-                    arg = decoders::i32(reader);
+                    arg = i32(reader);
                     break;
                 case opcode::op_i64_const:
-                    arg = decoders::i64(reader);
+                    arg = i64(reader);
                     break;
                 case opcode::op_f32_const:
-                    arg = decoders::f32(reader);
+                    arg = f32(reader);
                     break;
                 case opcode::op_f64_const:
-                    arg = decoders::f64(reader);
+                    arg = f64(reader);
                     break;
 
 
                 case opcode::op_block:
                 case opcode::op_loop:
                 case opcode::op_if:
-                    arg = decoders::result(reader);
+                    arg = result(reader);
                     break;
 
 
                 case opcode::op_br_table:
-                    arg = decoders::br_table_arg(reader);
+                    arg = br_table_arg(reader);
                     break;
 
 
@@ -348,7 +327,7 @@ namespace wasm::decoders {
 
             expression.push_back({op, opname, arg});
 
-            op = decoders::byteEnumItem<opcode>(reader);
+            op = byteEnumItem<opcode>(reader);
             opname = opcode_names[op];
         }
 
@@ -366,7 +345,7 @@ namespace wasm::decoders {
     inline element_t element(Reader& reader) {
         auto table = u32(reader);
         auto offset = constexprd(reader);
-        auto init = vec<index_t>(reader, readByte);
+        auto init = vec<index_t>(reader, u32);
 
         return {table, offset, init};
     }

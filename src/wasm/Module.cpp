@@ -1,20 +1,7 @@
 #include "Module.h"
 
-using namespace std;
-
 namespace wasm {
-    Module::Module(Reader &reader):
-            types(),
-            imports(),
-            functions(),
-            tables(),
-            memories(),
-            exports(),
-            codes(),
-            start(0),
-            elements(),
-            globals()
-    {
+    Module::Module(Reader &reader) {
         if (decoders::reinterpretBytes<u32_t>(reader) != magicNumber) {
             scream("Magic number is invalid\n");
         }
@@ -23,13 +10,11 @@ namespace wasm {
             scream("Missing or incompatible version\n");
         }
 
-        print("Module is valid, reading sections:\n");
-
         while (!reader.eof()) {
             auto [type, size] = decoders::section(reader);
             auto pos_before = reader.get_pos();
 
-            print("\t%s, size %d, ", wasm::section_names[type], size);
+            reader.safe_until(pos_before + size);
 
             switch (type) {
                 case section::s_type:
@@ -79,8 +64,6 @@ namespace wasm {
                 default:
                     break;
             }
-
-            print("done.\n");
 
             reader.seek_to(pos_before + size);
         }
