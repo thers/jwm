@@ -3,67 +3,6 @@
 using namespace std;
 
 namespace wasm {
-    inline auto readFuncdecl = [] (Reader& reader) {
-        return decoders::functype(reader);
-    };
-
-    inline auto readImport = [] (Reader& reader) {
-        importdesc_t import;
-
-        import.module = decoders::name(reader);
-        import.nm = decoders::name(reader);
-
-        import.type = decoders::byteEnumItem<importtype>(reader);
-
-        switch (import.type) {
-            case importtype::it_typeidx:
-                import.val = decoders::u32(reader);
-                break;
-
-            case importtype::it_tabletype:
-                import.val = decoders::table(reader);
-                break;
-
-            case importtype::it_memtype:
-                import.val = decoders::mem(reader);
-                break;
-
-            case importtype::it_globaltype:
-                import.val = decoders::global(reader);
-                break;
-        }
-
-        return import;
-    };
-
-    inline auto readTypeidx = [] (Reader& reader) {
-        return decoders::u32(reader);
-    };
-
-    inline auto readTable = [] (Reader& reader) {
-        return decoders::table(reader);
-    };
-
-    inline auto readMemory = [] (Reader& reader) {
-        return decoders::mem(reader);
-    };
-
-    inline auto readExport = [] (Reader& reader) {
-        auto nm = decoders::name(reader);
-        auto type = decoders::byteEnumItem<exporttype>(reader);
-        auto idx = decoders::u32(reader);
-
-        return exportdesc_t {nm, type, idx};
-    };
-
-    inline auto readCode = [] (Reader& reader) {
-        return decoders::code(reader);
-    };
-
-    inline auto readElement = [] (Reader& reader) {
-        return decoders::element(reader);
-    };
-
     Module::Module(Reader &reader):
             types(),
             imports(),
@@ -73,7 +12,8 @@ namespace wasm {
             exports(),
             codes(),
             start(0),
-            elements()
+            elements(),
+            globals()
     {
         if (decoders::reinterpretBytes<u32_t>(reader) != magicNumber) {
             scream("Magic number is invalid\n");
@@ -92,40 +32,44 @@ namespace wasm {
             print("\t%s, size %d, ", wasm::section_names[type], size);
 
             switch (type) {
-                case wasm::section::s_type:
-                    decoders::vec2<module_types_t>(&types, reader, readFuncdecl);
+                case section::s_type:
+                    decoders::vec2<module_types_t>(&types, reader, decoders::functype);
                     break;
 
-                case wasm::section::s_import:
-                    decoders::vec2<module_imports_t>(&imports, reader, readImport);
+                case section::s_import:
+                    decoders::vec2<module_imports_t>(&imports, reader, decoders::importdesc);
                     break;
 
-                case wasm::section::s_function:
-                    decoders::vec2<module_functions_t>(&functions, reader, readTypeidx);
+                case section::s_function:
+                    decoders::vec2<module_functions_t>(&functions, reader, decoders::u32);
                     break;
 
-                case wasm::section::s_table:
-                    decoders::vec2<module_tables_t>(&tables, reader, readTable);
+                case section::s_table:
+                    decoders::vec2<module_tables_t>(&tables, reader, decoders::table);
                     break;
 
-                case wasm::section::s_memory:
-                    decoders::vec2<module_memories_t>(&memories, reader, readMemory);
+                case section::s_memory:
+                    decoders::vec2<module_memories_t>(&memories, reader, decoders::mem);
                     break;
 
-                case wasm::section::s_export:
-                    decoders::vec2<module_exports_t>(&exports, reader, readExport);
+                case section::s_export:
+                    decoders::vec2<module_exports_t>(&exports, reader, decoders::exportdesc);
                     break;
 
-                case wasm::section::s_code:
-                    decoders::vec2<module_codes_t>(&codes, reader, readCode);
+                case section::s_code:
+                    decoders::vec2<module_codes_t>(&codes, reader, decoders::code);
                     break;
 
-                case wasm::section::s_start:
+                case section::s_start:
                     start = decoders::u32(reader);
                     break;
 
-                case wasm::section::s_element:
-                    decoders::vec2<module_element_t>(&elements, reader, readElement);
+                case section::s_element:
+                    decoders::vec2<module_elements_t>(&elements, reader, decoders::element);
+                    break;
+
+                case section::s_global:
+                    decoders::vec2<module_globals_t>(&globals, reader, decoders::globaldesc);
                     break;
             }
 

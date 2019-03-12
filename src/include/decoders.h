@@ -366,4 +366,47 @@ namespace wasm::decoders {
 
         return {table, offset, init};
     }
+
+    inline globaldesc_t globaldesc(Reader& reader) {
+        auto type = global(reader);
+        auto init = constexprd(reader);
+
+        return {type, init};
+    }
+
+    inline exportdesc_t exportdesc(Reader& reader) {
+        auto nm = name(reader);
+        auto type = byteEnumItem<exporttype>(reader);
+        auto idx = u32(reader);
+
+        return {nm, type, idx};
+    }
+
+    inline importdesc_t importdesc(Reader& reader) {
+        auto module = name(reader);
+        auto name_ = name(reader);
+
+        auto type = byteEnumItem<importtype>(reader);
+        importdesc_val_t val;
+
+        switch (type) {
+            case importtype::it_typeidx:
+                val = u32(reader);
+                break;
+
+            case importtype::it_tabletype:
+                val = table(reader);
+                break;
+
+            case importtype::it_memtype:
+                val = mem(reader);
+                break;
+
+            case importtype::it_globaltype:
+                val = global(reader);
+                break;
+        }
+
+        return {module, name_, type, val};
+    }
 }

@@ -72,7 +72,7 @@ namespace wasm {
     >;
     struct importdesc_t {
         name_t module;
-        name_t nm;
+        name_t name;
 
         importtype type;
         importdesc_val_t val;
@@ -205,5 +205,10 @@ namespace wasm {
         index_t table;
         constexpr_t offset;
         vec_t<index_t> init;
+    };
+
+    struct globaldesc_t {
+        global_t type;
+        constexpr_t init;
     };
 }
