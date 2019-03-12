@@ -85,8 +85,8 @@ namespace wasm {
         index_t idx;
     };
 
-    inline const u32_t magicNumber = 0x0061736d;
-    inline const u32_t versionNumber = 0x01000000;
+    inline const u32_t magicNumber = 0x6d736100;
+    inline const u32_t versionNumber = 0x1;
 
     typedef std::size_t pos_t;
 

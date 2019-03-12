@@ -38,7 +38,6 @@ namespace wasm::decoders {
     template <typename T>
     T reinterpretBytes(Reader& reader) {
         auto bytes = reader.content(sizeof(T));
-        std::reverse(std::begin(bytes), std::end(bytes));
 
         return *reinterpret_cast<T *>(bytes.data());
     }
@@ -73,15 +72,11 @@ namespace wasm::decoders {
     }
 
     inline f32_t f32(Reader& reader) {
-        auto bytes = reader.content(sizeof(f32_t));
-
-        return *reinterpret_cast<f32_t *>(bytes.data());
+        return reinterpretBytes<f32_t>(reader);
     }
 
     inline f64_t f64(Reader& reader) {
-        auto bytes = reader.content(sizeof(f64_t));
-
-        return *reinterpret_cast<f64_t *>(bytes.data());
+        return reinterpretBytes<f64_t>(reader);
     }
 
     template <typename T, typename F>
@@ -123,12 +118,8 @@ namespace wasm::decoders {
             scream("\nAttempt to parse functype that isn't a functype\n");
         }
 
-        auto readValtype = [] (Reader& reader) {
-            return byteEnumItem<valtype>(reader);
-        };
-
-        auto parameterTypes = vec<valtype>(reader, readValtype);
-        auto resultTypes = vec<valtype>(reader, readValtype);
+        auto parameterTypes = vec<valtype>(reader, byteEnumItem<valtype>);
+        auto resultTypes = vec<valtype>(reader, byteEnumItem<valtype>);
 
         return {parameterTypes, resultTypes};
     }
@@ -140,7 +131,7 @@ namespace wasm::decoders {
     }
 
     inline limit_t limit(Reader& reader) {
-        auto type = byteEnumItem<wasm::limittype>(reader);
+        auto type = byteEnumItem<limittype>(reader);
 
         if (type == limittype::mt_finite) {
             return {true, u32(reader), u32(reader)};
