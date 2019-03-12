@@ -2,11 +2,10 @@
 
 #include <stdin.h>
 #include <wasm.h>
-#include <decoders.h>
 
-using namespace std;
+using namespace wasm;
 
-namespace wasm {
+namespace runtime {
     using module_types_t = vec_t<functype_t>;
     using module_imports_t = vec_t<importdesc_t>;
     using module_functions_t = vec_t<u32_t>;

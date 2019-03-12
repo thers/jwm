@@ -3,9 +3,8 @@ project(jwm)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(src/include)
+include_directories(include)
 
 add_executable(jwm
         src/main.cpp
-        src/utils/io.cpp
-        src/wasm/Module.cpp)
+        src/wasm/runtime/Module.cpp)

@@ -2,6 +2,8 @@
 
 #include <stdin.h>
 
+#include "opcodes.h"
+
 namespace wasm {
     enum type : byte_t {
         t_i32 = 0x7f,

@@ -1,6 +1,6 @@
-#include "Module.h"
+#include <runtime/Module.h>
 
-namespace wasm {
+namespace runtime {
     Module::Module(Reader &reader) {
         if (decoders::reinterpretBytes<u32_t>(reader) != magicNumber) {
             scream("Magic number is invalid\n");

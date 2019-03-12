@@ -1,9 +1,10 @@
 #pragma once
 
-#include <stdin.h>
-#include <wasm.h>
 #include <tuple>
 #include <algorithm>
+
+#include "types.h"
+#include "reader.h"
 
 namespace wasm::decoders {
     template <typename T>
