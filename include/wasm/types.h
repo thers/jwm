@@ -14,7 +14,6 @@ namespace wasm {
     template <typename... T>
     using seq_t = std::tuple<T...>;
 
-    using size_t = uint32_t;
     using content_t = std::vector<byte_t>;
 
     using u64_t = uint64_t;
@@ -100,7 +99,7 @@ namespace wasm {
 
     struct section_t {
         section type;
-        size_t size;
+        u32_t size;
     };
 
     struct memop_arg_t {

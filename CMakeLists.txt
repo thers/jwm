@@ -3,8 +3,14 @@ project(jwm)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(include)
+file(GLOB_RECURSE SOURCES src/*.cpp)
 
-add_executable(jwm
-        src/main.cpp
-        src/wasm/runtime/Module.cpp)
+include_directories(include)
+include_directories(vendor/xbyak/include)
+
+add_subdirectory(vendor/fmt)
+add_subdirectory(vendor/xbyak)
+
+add_executable(jwm src/bin/debug.cpp ${SOURCES})
+
+target_link_libraries(jwm fmt)

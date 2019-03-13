@@ -7,11 +7,11 @@
 
 #include <stdin.h>
 #include <wasm.h>
+#include <jit.h>
 #include <runtime/Module.h>
 
 using namespace std;
 
-// jit! https://github.com/herumi/xbyak/tree/master/xbyak
 // wasm2wat https://cdn.rawgit.com/WebAssembly/wabt/fb986fbd/demo/wasm2wat/
 // wat2wasm https://cdn.rawgit.com/WebAssembly/wabt/fb986fbd/demo/wat2wasm/
 
