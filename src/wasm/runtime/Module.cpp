@@ -1,6 +1,16 @@
 #include <runtime/Module.h>
 
 namespace runtime {
+    Module decode_module(content_t &content) {
+        Reader reader(content);
+
+        return Module {reader};
+    }
+
+    void parse_module(std::string& content) {
+        scream("Text format is not supported, use dedicated utilities to compile binary");
+    }
+
     Module::Module(Reader &reader) {
         if (decoders::reinterpretBytes<u32_t>(reader) != magicNumber) {
             scream("Magic number is invalid\n");

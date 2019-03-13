@@ -18,12 +18,10 @@ using namespace std;
 wasm::content_t readModule(char *path);
 
 int main(int argc, char** argv) {
-    auto moduleContent = readModule(argv[1]);
+    auto content = readModule(argv[1]);
+    auto module = runtime::decode_module(content);
 
-    wasm::Reader reader(moduleContent);
-    runtime::Module module(reader);
-
-    printbv(moduleContent);
+    printbv(content);
 
     return 0;
 }

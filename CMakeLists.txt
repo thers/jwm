@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 file(GLOB_RECURSE SOURCES src/*.cpp)
 
 include_directories(include)
-include_directories(vendor/xbyak/include)
+include_directories(vendor/xbyak)
 
 add_subdirectory(vendor/fmt)
 add_subdirectory(vendor/xbyak)

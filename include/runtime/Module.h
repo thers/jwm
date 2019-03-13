@@ -34,4 +34,8 @@ namespace runtime {
     public:
         Module(Reader& reader);
     };
+
+    Module decode_module(content_t &content);
+
+    void parse_module(std::string& content);
 }

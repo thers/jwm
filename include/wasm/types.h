@@ -110,7 +110,6 @@ namespace wasm {
     using br_table_arg_t = std::pair<vec_t<labelidx_t>, labelidx_t>;
 
     using instr_arg_t = std::variant<
-            nullptr_t,
             u32_t,
             u64_t,
             i32_t,

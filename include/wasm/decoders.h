@@ -313,7 +313,6 @@ namespace wasm::decoders {
 
 
                 default:
-                    arg = NULL;
                     break;
             }
 

@@ -1,0 +1,6 @@
+[submodule "vendor/xbyak"]
+	path = vendor/xbyak
+	url = https://github.com/herumi/xbyak.git
+[submodule "vendor/fmt"]
+	path = vendor/fmt
+	url = https://github.com/fmtlib/fmt.git
