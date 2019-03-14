@@ -2,8 +2,10 @@
 
 #include <wasm.h>
 
+#include "Memory.h"
+
 namespace runtime {
-    using store_funcs_t = vec_t<>;
+    using store_memories_t = vec_t<Memory>;
     
     class Store {
         

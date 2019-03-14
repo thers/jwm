@@ -8,7 +8,7 @@
 #include <stdin.h>
 #include <wasm.h>
 #include <jit.h>
-#include <runtime/Module.h>
+#include <runtime.h>
 
 using namespace std;
 
