@@ -33,6 +33,10 @@ namespace runtime {
 
     public:
         Module(Reader& reader);
+
+        u32_t get_num_functions();
+
+        bool function_exist();
     };
 
     Module decode_module(content_t &content);
