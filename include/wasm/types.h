@@ -5,6 +5,7 @@
 #include <vector>
 #include <limits>
 #include <variant>
+#include <utility>
 
 #include <wasm/enums/opcodes.h>
 #include <wasm/enums/sections.h>
@@ -13,6 +14,9 @@
 namespace wasm {
     template <typename... T>
     using seq_t = std::tuple<T...>;
+
+    template <typename T>
+    using span_t = std::pair<T, size_t>;
 
     using content_t = std::vector<byte_t>;
 
@@ -43,6 +47,8 @@ namespace wasm {
         vec_t<valtype> arguments_types;
         vec_t<valtype> results_types;
     };
+
+    using valuettype_t = std::variant<i32_t, i64_t, f32_t, f64_t>;
 
     using index_t = u32_t;
 

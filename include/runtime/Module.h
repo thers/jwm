@@ -39,7 +39,19 @@ namespace runtime {
         bool function_exist();
     };
 
-    Module decode_module(content_t &content);
+    using moduleinst_types_t = module_types_t;
+    using moduleinst_funcaddr_t = vec_t<u32_t>;
+    using moduleinst_tableaddr_t = vec_t<u32_t>;
+    using moduleinst_memaddr_t = vec_t<u32_t>;
+    using moduleinst_globaladdr_t = vec_t<u32_t>;
+    using moduleinst_exportinst_t = vec_t<exportdesc_t>;
 
-    void parse_module(std::string& content);
+    struct ModuleInst {
+        module_types_t types;
+        moduleinst_funcaddr_t funcaddr;
+        moduleinst_tableaddr_t tableaddr;
+        moduleinst_memaddr_t memaddr;
+        moduleinst_globaladdr_t globaladdr;
+        moduleinst_exportinst_t exportinst;
+    };
 }
