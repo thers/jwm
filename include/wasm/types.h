@@ -12,6 +12,8 @@
 #include <wasm/enums/types.h>
 
 namespace wasm {
+    using addr_t = uint64_t;
+
     template <typename... T>
     using seq_t = std::tuple<T...>;
 
@@ -88,6 +90,16 @@ namespace wasm {
 
         exporttype type;
         index_t idx;
+    };
+
+    struct externval_t {
+        exporttype type;
+        addr_t addr;
+    };
+
+    struct exportinst_t {
+        name_t name;
+        externval_t externval;
     };
 
     inline const u32_t magicNumber = 0x6d736100;

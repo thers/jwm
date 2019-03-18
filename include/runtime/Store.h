@@ -2,35 +2,33 @@
 
 #include <wasm.h>
 
+#include "Module.h"
 #include "Memory.h"
 #include "Stack.h"
+
+using namespace wasm;
 
 namespace runtime {
     class FuncInst {
         functype_t type;
-
     public:
-        void invoke(Stack& stack);
-        bool returns_void();
     };
 
-    using store_memories_t = vec_t<Memory>;
-    
+    class GlobalInst {
+        global_t desc;
+        constinstr_arg_t value;
+    public:
+        global_t* get_desc();
+        constinstr_arg_t get();
+        void set(constinstr_arg_t v);
+    };
+
     class Store {
         Stack stack;
-
         vec_t<FuncInst> functions;
-
-        void invoke_function_int(index_t funcaddr, wasm::vec_t<wasm::valuettype_t>& args, wasm::valuettype_t& ret);
-
+        vec_t<GlobalInst> globals;
     public:
-        template <typename T>
-        T invoke_function(index_t funcaddr, wasm::vec_t<wasm::valuettype_t>& args) {
-            valuettype_t ret;
-
-            invoke_function_int(funcaddr, args, ret);
-
-            return std::get<T>(ret);
-        }
+        Store(Module& module);
+        constinstr_arg_t get_global(index_t index);
     };
 }

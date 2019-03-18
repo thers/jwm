@@ -159,7 +159,7 @@ namespace wasm::decoders {
         auto valtype = byteEnumItem<wasm::valtype>(reader);
         auto mut = byteEnumItem<wasm::mut>(reader);
 
-        return {valtype, mut == mut::m_const};
+        return {valtype, mut == mut::m_var};
     }
 
     inline section_t section(Reader& reader) {

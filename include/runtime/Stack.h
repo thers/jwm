@@ -7,9 +7,14 @@
 
 #include "types.h"
 
+using namespace wasm;
+
 namespace runtime {
+    using operands_stack_t = std::stack<valuettype_t>;
+    using labels_stack_t = std::stack<u32_t>;
+
     struct Stack {
-        std::stack<wasm::valuettype_t> operands;
-        std::stack<wasm::u32_t> labels;
+        operands_stack_t operands;
+        labels_stack_t labels;
     };
 }

@@ -1,7 +1,13 @@
 #pragma once
 
 #include <cstdlib>
+
 #include <stdin.h>
+#include <wasm.h>
+
+#include "types.h"
+
+using namespace wasm;
 
 namespace runtime {
     class Memory {
@@ -15,7 +21,7 @@ namespace runtime {
 
         trap_t trap;
 
-        void check_boundaries();
+        void check_boundaries(u32_t at);
 
     public:
         explicit Memory(u32_t s, u32_t m, trap_t t):

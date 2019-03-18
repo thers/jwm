@@ -5,8 +5,7 @@
 #include <runtime/Store.h>
 #include <runtime/Stack.h>
 #include <runtime/Env.h>
-#include <runtime/jit/jit.h>
-#include <runtime/baseline/baseline.h>
+#include <runtime/Executor.h>
 
 namespace runtime {
     Module decode_module(content_t &content);
