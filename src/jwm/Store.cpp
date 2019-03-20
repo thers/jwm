@@ -13,7 +13,7 @@ namespace jwm::runtime {
         value = v;
     }
 
-    val_t Store::get_global(ModuleInst &moduleInst, index_t index) {
+    val_t Store::get_global(ModuleInst &moduleInst, index_decl_t index) {
         return globals[moduleInst.get_global(index)].get_value();
     }
 
@@ -22,10 +22,10 @@ namespace jwm::runtime {
     }
 
     void Store::allocate_module(ModuleInst &globalInst, Module &module) {
-        module.for_each_global([&](globaldesc_t globalDesc) {
+        module.for_each_global([&](global_decl_t globalDesc) {
             auto value = executor::constexprEval((*this), globalInst, globalDesc.init);
 
-            globals.push_back({globalDesc.type, value});
+            globals.push_back({globalDesc, value});
         });
     }
 }

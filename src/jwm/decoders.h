@@ -110,11 +110,11 @@ namespace jwm::wasm::decoders {
         return vec<byte_t>(reader, byte);
     }
 
-    inline memop_arg_t memop_args(Reader& reader) {
+    inline memory_immediate_arg_decl_t memop_args(Reader& reader) {
         return {u32(reader), u32(reader)};
     }
 
-    inline functype_t functype(Reader& reader) {
+    inline func_args_decl_t functype(Reader& reader) {
         auto funcbyte = byteEnumItem<type>(reader);
 
         if (funcbyte != type::t_functype) {
@@ -133,7 +133,7 @@ namespace jwm::wasm::decoders {
         return {bytes.begin(), bytes.end()};
     }
 
-    inline limit_t limit(Reader& reader) {
+    inline limit_decl_t limit(Reader& reader) {
         auto type = byteEnumItem<limittype>(reader);
 
         if (type == limittype::mt_finite) {
@@ -143,58 +143,58 @@ namespace jwm::wasm::decoders {
         return {false, u32(reader), 0};
     }
 
-    inline table_t table(Reader &reader) {
+    inline table_decl_t table(Reader &reader) {
         auto elemtype = byte(reader);
 
         if (elemtype != 0x70) {
-            scream("\nWrong table_t\n");
+            scream("\nWrong table_decl_t\n");
         }
 
         return limit(reader);
     }
 
-    inline mem_t mem(Reader &reader) {
+    inline mem_decl_t mem(Reader &reader) {
         return limit(reader);
     }
 
-    inline global_t global(Reader &reader) {
+    inline global_type_decl_t global(Reader &reader) {
         auto valtype = byteEnumItem<wasm::valtype>(reader);
         auto mut = byteEnumItem<wasm::mut>(reader);
 
         return {valtype, mut == mut::m_var};
     }
 
-    inline section_t section(Reader& reader) {
+    inline section_decl_t section(Reader& reader) {
         auto type = byteEnumItem<wasm::section>(reader);
         auto size = u32(reader);
 
         return {type, size};
     }
 
-    inline result_t result(Reader& reader) {
+    inline result_decl_t result(Reader& reader) {
         return {byteEnumItem<wasm::valtype>(reader)};
     }
 
     inline br_table_arg_t br_table_arg(Reader& reader) {
-        auto labels = decoders::vec<labelidx_t>(reader, u32);
-        labelidx_t labelidx = decoders::u32(reader);
+        auto labels = decoders::vec<labelidx_decl_t>(reader, u32);
+        labelidx_decl_t labelidx = decoders::u32(reader);
 
         return {labels, labelidx};
     }
 
-    inline local_t local(Reader& reader) {
+    inline locals_decl_t local(Reader& reader) {
         return {u32(reader), byteEnumItem<valtype>(reader)};
     }
 
-    inline vec_t<local_t> locals(Reader& reader) {
-        return vec<local_t>(reader, local);
+    inline vec_t<locals_decl_t> locals(Reader& reader) {
+        return vec<locals_decl_t>(reader, local);
     }
 
-    static constexpr_t constexprd(Reader& reader) {
-        constexpr_t constexpression;
+    static constexpr_decl_t constexprd(Reader& reader) {
+        constexpr_decl_t constexpression;
 
         auto op = byteEnumItem<constinstrtype>(reader);
-        constinstr_arg_t arg;
+        constinstr_arg_decl_t arg;
 
         while (op != constinstrtype::cit_end) {
             switch (op) {
@@ -212,7 +212,7 @@ namespace jwm::wasm::decoders {
                     break;
 
                 case constinstrtype::cit_global_get:
-                    arg = constinstr_arg_t {u32(reader)};
+                    arg = constinstr_arg_decl_t {u32(reader)};
                     break;
 
                 default:
@@ -228,12 +228,12 @@ namespace jwm::wasm::decoders {
         return constexpression;
     }
 
-    static expr_t expr(Reader& reader) {
-        expr_t expression;
+    static expr_decl_t expr(Reader& reader) {
+        expr_decl_t expression;
 
         auto op = byteEnumItem<opcode>(reader);
         auto opname = opcode_names[op];
-        instr_arg_t arg;
+        instr_arg_decl_t arg;
 
         while (op != opcode::op_end) {
             if (!opname) {
@@ -254,7 +254,7 @@ namespace jwm::wasm::decoders {
 
                 case opcode::op_get_global:
                 case opcode::op_set_global:
-                    arg = instr_arg_t {u32(reader)};
+                    arg = instr_arg_decl_t {u32(reader)};
                     break;
 
 
@@ -328,30 +328,30 @@ namespace jwm::wasm::decoders {
         return expression;
     }
 
-    inline func_t func(Reader& reader) {
+    inline func_decl_t func(Reader& reader) {
         return {locals(reader), expr(reader)};
     }
 
-    inline code_t code(Reader& reader) {
+    inline code_decl_t code(Reader& reader) {
         return {u32(reader), func(reader)};
     }
 
-    inline element_t element(Reader& reader) {
+    inline element_decl_t element(Reader& reader) {
         auto table = u32(reader);
         auto offset = constexprd(reader);
-        auto init = vec<index_t>(reader, u32);
+        auto init = vec<index_decl_t>(reader, u32);
 
         return {table, offset, init};
     }
 
-    inline globaldesc_t globaldesc(Reader& reader) {
+    inline global_decl_t globaldesc(Reader& reader) {
         auto type = global(reader);
         auto init = constexprd(reader);
 
         return {type, init};
     }
 
-    inline exportdesc_t exportdesc(Reader& reader) {
+    inline export_decl_t exportdesc(Reader& reader) {
         auto nm = name(reader);
         auto type = byteEnumItem<exporttype>(reader);
         auto idx = u32(reader);
@@ -359,12 +359,12 @@ namespace jwm::wasm::decoders {
         return {nm, type, idx};
     }
 
-    inline importdesc_t importdesc(Reader& reader) {
+    inline import_decl_t importdesc(Reader& reader) {
         auto module = name(reader);
         auto name_ = name(reader);
 
         auto type = byteEnumItem<importtype>(reader);
-        importdesc_val_t val;
+        import_decl_val_t val;
 
         switch (type) {
             case importtype::it_typeidx:

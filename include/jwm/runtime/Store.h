@@ -10,7 +10,7 @@ using namespace jwm::wasm;
 
 namespace jwm::runtime {
     class FuncInst {
-        functype_t type;
+        func_args_decl_t type;
     public:
     };
 
@@ -18,8 +18,8 @@ namespace jwm::runtime {
         bool mut;
         val_t value;
     public:
-        GlobalInst(global_t &desc, val_t v) :
-                mut(desc.is_mutable),
+        GlobalInst(global_decl_t &decl, val_t v) :
+                mut(decl.mut),
                 value(v) {}
 
         val_t get_value();
@@ -33,7 +33,7 @@ namespace jwm::runtime {
         vec_t<GlobalInst> globals;
 
     public:
-        val_t get_global(ModuleInst &moduleInst, index_t index);
+        val_t get_global(ModuleInst &moduleInst, index_decl_t index);
 
         val_t get_global(ModuleInst &moduleInst, name_t name);
 

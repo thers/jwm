@@ -8,7 +8,7 @@
 using namespace jwm;
 
 namespace jwm::runtime::executor {
-    inline val_t constexprEval(runtime::Store &store, ModuleInst &moduleInst, constexpr_t &expr) {
+    inline val_t constexprEval(runtime::Store &store, ModuleInst &moduleInst, constexpr_decl_t &expr) {
         operands_stack_t stack;
 
         for (auto[op, arg]: expr) {
@@ -30,7 +30,7 @@ namespace jwm::runtime::executor {
                     break;
 
                 case constinstrtype::cit_global_get: {
-                    auto global = store.get_global(moduleInst, std::get<index_t>(arg));
+                    auto global = store.get_global(moduleInst, std::get<index_decl_t>(arg));
 
                     std::visit(overloaded{
                             [&](auto v) { scream("Error during global initialization"); },

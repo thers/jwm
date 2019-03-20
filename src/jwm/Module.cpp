@@ -84,62 +84,62 @@ namespace jwm::runtime {
         }
     }
 
-    globaldesc_t *Module::get_global(index_t index) {
+    global_decl_t *Module::get_global(index_decl_t index) {
         return &globals[index];
     }
 
-    index_t ModuleInst::add_type(functype_t &type) {
+    index_decl_t ModuleInst::add_type(func_args_decl_t &type) {
         types.push_back(type);
         return types.size() - 1;
     }
 
-    index_t ModuleInst::add_func(addr_t addr) {
+    index_decl_t ModuleInst::add_func(addr_t addr) {
         funcaddr.push_back(addr);
         return funcaddr.size() - 1;
     }
 
-    index_t ModuleInst::add_table(addr_t addr) {
+    index_decl_t ModuleInst::add_table(addr_t addr) {
         tableaddr.push_back(addr);
         return tableaddr.size() - 1;
     }
 
-    index_t ModuleInst::add_memory(addr_t addr) {
+    index_decl_t ModuleInst::add_memory(addr_t addr) {
         memaddr.push_back(addr);
         return memaddr.size() - 1;
     }
 
-    index_t ModuleInst::add_global(addr_t addr, name_t &name) {
+    index_decl_t ModuleInst::add_global(addr_t addr, name_t &name) {
         globaladdr.push_back(addr);
 
-        index_t index = globaladdr.size() - 1;
+        index_decl_t index = globaladdr.size() - 1;
 
-        globals_map.insert(std::pair<name_t, index_t>(name, index));
+        globals_map.insert(std::pair<name_t, index_decl_t>(name, index));
 
         return index;
     }
 
-    index_t ModuleInst::add_export(exportinst_t &einst) {
+    index_decl_t ModuleInst::add_export(export_inst_t &einst) {
         exportinst.push_back(einst);
         return exportinst.size() - 1;
     }
 
-    functype_t ModuleInst::get_type(index_t index) {
+    func_args_decl_t ModuleInst::get_type(index_decl_t index) {
         return types[index];
     }
 
-    addr_t ModuleInst::get_func(index_t index) {
+    addr_t ModuleInst::get_func(index_decl_t index) {
         return funcaddr[index];
     }
 
-    addr_t ModuleInst::get_table(index_t index) {
+    addr_t ModuleInst::get_table(index_decl_t index) {
         return tableaddr[index];
     }
 
-    addr_t ModuleInst::get_memory(index_t index) {
+    addr_t ModuleInst::get_memory(index_decl_t index) {
         return memaddr[index];
     }
 
-    addr_t ModuleInst::get_global(index_t index) {
+    addr_t ModuleInst::get_global(index_decl_t index) {
         return globaladdr[index];
     }
 
@@ -147,7 +147,7 @@ namespace jwm::runtime {
         return globaladdr[globals_map[name]];
     }
 
-    exportinst_t ModuleInst::get_export(index_t index) {
+    export_inst_t ModuleInst::get_export(index_decl_t index) {
         return exportinst[index];
     }
 }
