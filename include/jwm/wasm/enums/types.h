@@ -1,10 +1,10 @@
 #pragma once
 
-#include <stdin.h>
+#include <jwm/stdinc.h>
 
 #include "opcodes.h"
 
-namespace wasm {
+namespace jwm::wasm {
     enum type : byte_t {
         t_i32 = 0x7f,
         t_i64 = 0x7e,

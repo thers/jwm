@@ -2,14 +2,14 @@
 
 #include <stack>
 
-#include <stdin.h>
-#include <wasm.h>
+#include <jwm/stdinc.h>
+#include <jwm/wasm.h>
 
 #include "types.h"
 
-using namespace wasm;
+using namespace jwm::wasm;
 
-namespace runtime {
+namespace jwm::runtime {
     using operands_stack_t = std::stack<valuettype_t>;
     using labels_stack_t = std::stack<u32_t>;
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../Store.h"
+#include "jwm/runtime/Store.h"
 
-namespace runtime::baseline {
+namespace jwm::jwm::runtime::baseline {
     template <typename T>
     T evaluateConstexpr(Store& store, constexpr_t& expr) {
 

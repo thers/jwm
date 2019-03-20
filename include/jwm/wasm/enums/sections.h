@@ -1,9 +1,9 @@
 #pragma once
 
-#include <stdin.h>
+#include <jwm/stdinc.h>
 #include <map>
 
-namespace wasm {
+namespace jwm::wasm {
     enum section : byte_t {
         s_custom = 0,
         s_type = 1,

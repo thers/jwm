@@ -1,8 +1,8 @@
-#include <stdin.h>
-#include <wasm.h>
-#include <runtime/Memory.h>
+#include <jwm/jwm.h>
 
-namespace runtime {
+using namespace jwm::wasm;
+
+namespace jwm::runtime {
     void Memory::check_boundaries(u32_t at) {
         if (at < 0 || at >= max_offset) {
             trap();

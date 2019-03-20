@@ -5,12 +5,11 @@ set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
 
-include_directories(include)
-include_directories(vendor/xbyak)
+include_directories(./include ./src/include ./vendor/xbyak)
 
 add_subdirectory(vendor/fmt)
 add_subdirectory(vendor/xbyak)
 
-add_executable(jwm src/bin/debug.cpp ${SOURCES})
+add_executable(jwm ${SOURCES} src/bin/debug.cpp)
 
 target_link_libraries(jwm fmt)

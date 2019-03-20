@@ -1,8 +1,8 @@
 #pragma once
 
-#include <wasm.h>
+#include <jwm/wasm.h>
 
-namespace runtime {
+namespace jwm::runtime {
     using trap_t = void (*)();
 
     template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };

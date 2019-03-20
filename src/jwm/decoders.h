@@ -1,12 +1,14 @@
 #pragma once
 
 #include <tuple>
-#include <algorithm>
+#include <optional>
 
-#include "types.h"
+#include <jwm/stdinc.h>
+#include <jwm/wasm.h>
+
 #include "reader.h"
 
-namespace wasm::decoders {
+namespace jwm::wasm::decoders {
     template <typename T>
     T signedInteger(Reader& reader) {
         T result = 0;
@@ -313,6 +315,7 @@ namespace wasm::decoders {
 
 
                 default:
+                    arg = std::nullopt;
                     break;
             }
 

@@ -2,14 +2,14 @@
 
 #include <cstdlib>
 
-#include <stdin.h>
-#include <wasm.h>
+#include <jwm/stdinc.h>
+#include <jwm/wasm.h>
 
 #include "types.h"
 
-using namespace wasm;
+using namespace jwm::wasm;
 
-namespace runtime {
+namespace jwm::runtime {
     class Memory {
         static const u32_t page_size = 65536;
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <stdin.h>
+#include <jwm/stdinc.h>
 #include <map>
 
-namespace wasm {
+namespace jwm::wasm {
     enum opcode : byte_t {
         // Control flow operators
         op_unreachable = 0x00,

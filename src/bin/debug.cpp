@@ -5,24 +5,24 @@
 #include <vector>
 #include <cstdio>
 
-#include <stdin.h>
-#include <wasm.h>
-#include <jit.h>
-#include <runtime.h>
+#include <jwm/jwm.h>
 
 using namespace std;
+using namespace jwm;
 
-// wasm2wat https://cdn.rawgit.com/WebAssembly/wabt/fb986fbd/demo/wasm2wat/
-// wat2wasm https://cdn.rawgit.com/WebAssembly/wabt/fb986fbd/demo/wat2wasm/
+// wasm2wat https://cdn.rawgit.com/WebAssembly/wabt/master/demo/wasm2wat/
+// wat2wasm https://cdn.rawgit.com/WebAssembly/wabt/master/demo/wat2wasm/
 
 wasm::content_t readModule(char *path);
 
 int main(int argc, char** argv) {
     auto content = readModule(argv[1]);
-    auto module = runtime::decode_module(content);
-    runtime::Store st(module);
+    auto module = decode_module(content);
 
-    auto yay = runtime::executor::constexprEval<i32_t>(st, module.get_global(6)->init);
+    runtime::ModuleInst mi;
+    runtime::Store st;
+
+    st.allocate_module(mi, module);
 
     printbv(content);
 

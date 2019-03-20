@@ -1,17 +1,22 @@
-#include <runtime/Module.h>
+#include <jwm/jwm.h>
 
-namespace runtime {
-    Module decode_module(content_t &content) {
-        Reader reader(content);
+#include "reader.h"
+#include "decoders.h"
 
-        return Module {reader};
+namespace jwm {
+    runtime::Module decode_module(content_t &content) {
+        return {content};
     }
 
-    void parse_module(std::string& content) {
+    void parse_module(std::string &content) {
         scream("Text format is not supported, use dedicated utilities to compile binary");
     }
+}
 
-    Module::Module(Reader &reader) {
+namespace jwm::runtime {
+    Module::Module(content_t &content) {
+        Reader reader(content);
+
         if (decoders::reinterpretBytes<u32_t>(reader) != magicNumber) {
             scream("Magic number is invalid\n");
         }
@@ -21,7 +26,7 @@ namespace runtime {
         }
 
         while (!reader.eof()) {
-            auto [type, size] = decoders::section(reader);
+            auto[type, size] = decoders::section(reader);
             auto pos_before = reader.getPos();
 
             reader.setSafeUntil(pos_before + size);
@@ -79,11 +84,11 @@ namespace runtime {
         }
     }
 
-    globaldesc_t* Module::get_global(index_t index) {
+    globaldesc_t *Module::get_global(index_t index) {
         return &globals[index];
     }
 
-    index_t ModuleInst::add_type(functype_t type) {
+    index_t ModuleInst::add_type(functype_t &type) {
         types.push_back(type);
         return types.size() - 1;
     }
@@ -97,12 +102,13 @@ namespace runtime {
         tableaddr.push_back(addr);
         return tableaddr.size() - 1;
     }
+
     index_t ModuleInst::add_memory(addr_t addr) {
         memaddr.push_back(addr);
         return memaddr.size() - 1;
     }
 
-    index_t ModuleInst::add_global(addr_t addr, name_t name) {
+    index_t ModuleInst::add_global(addr_t addr, name_t &name) {
         globaladdr.push_back(addr);
 
         index_t index = globaladdr.size() - 1;
@@ -112,7 +118,7 @@ namespace runtime {
         return index;
     }
 
-    index_t ModuleInst::add_export(exportinst_t einst) {
+    index_t ModuleInst::add_export(exportinst_t &einst) {
         exportinst.push_back(einst);
         return exportinst.size() - 1;
     }
@@ -137,7 +143,7 @@ namespace runtime {
         return globaladdr[index];
     }
 
-    addr_t ModuleInst::get_global(name_t name) {
+    addr_t ModuleInst::get_global(name_t &name) {
         return globaladdr[globals_map[name]];
     }
 

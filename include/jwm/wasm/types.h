@@ -1,17 +1,18 @@
 #pragma once
 
-#include <stdin.h>
 #include <array>
 #include <vector>
 #include <limits>
 #include <variant>
 #include <utility>
 
-#include <wasm/enums/opcodes.h>
-#include <wasm/enums/sections.h>
-#include <wasm/enums/types.h>
+#include <jwm/stdinc.h>
 
-namespace wasm {
+#include "enums/opcodes.h"
+#include "enums/sections.h"
+#include "enums/types.h"
+
+namespace jwm::wasm {
     using addr_t = uint64_t;
 
     template <typename... T>
@@ -127,7 +128,7 @@ namespace wasm {
 
     using br_table_arg_t = std::pair<vec_t<labelidx_t>, labelidx_t>;
 
-    using instr_arg_t = std::variant<
+    using instr_arg_t = std::optional<std::variant<
             u32_t,
             u64_t,
             i32_t,
@@ -137,7 +138,7 @@ namespace wasm {
             result_t,
             memop_arg_t,
             br_table_arg_t
-    >;
+    >>;
     struct instr_t {
         opcode op;
         name_t opname;
@@ -190,4 +191,11 @@ namespace wasm {
         constexpr_t offset;
         content_t init;
     };
+
+    using val_t = std::variant<
+            i32_t,
+            i64_t,
+            f32_t,
+            f64_t
+    >;
 }
