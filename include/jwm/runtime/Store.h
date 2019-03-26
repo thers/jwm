@@ -11,7 +11,11 @@ using namespace jwm::wasm;
 namespace jwm::runtime {
     class FuncInst {
         func_args_decl_t type;
+        code_decl_t code;
     public:
+        FuncInst(func_args_decl_t &t, code_decl_t &c) :
+                type(t),
+                code(c) {}
     };
 
     class GlobalInst {
@@ -27,12 +31,25 @@ namespace jwm::runtime {
         void set(val_t v);
     };
 
+    class TableInst {
+        type elemtype;
+        limit_decl_t limits;
+    public:
+        TableInst(limit_decl_t &l) :
+                elemtype(type::t_funcref),
+                limits(l) {}
+    };
+
     class Store {
         Stack stack;
         vec_t<FuncInst> functions;
         vec_t<GlobalInst> globals;
+        vec_t<TableInst> tables;
+        vec_t<Memory> memories;
 
     public:
+        static void trap();
+
         val_t get_global(ModuleInst &moduleInst, index_decl_t index);
 
         val_t get_global(ModuleInst &moduleInst, name_t name);

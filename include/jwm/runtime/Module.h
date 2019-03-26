@@ -44,6 +44,27 @@ namespace jwm::runtime {
                 cb(global);
             }
         }
+
+        template<typename T>
+        void for_each_function(T cb) {
+            for (auto function: functions) {
+                cb(types[function], codes[function]);
+            }
+        }
+
+        template<typename T>
+        void for_each_table(T cb) {
+            for (auto table: tables) {
+                cb(table);
+            }
+        }
+
+        template<typename T>
+        void for_each_memory(T cb) {
+            for (auto memory: memories) {
+                cb(memory);
+            }
+        }
     };
 
     class ModuleInst {

@@ -13,6 +13,10 @@ namespace jwm::runtime {
         value = v;
     }
 
+    void Store::trap() {
+        scream("Unexpected trap occured");
+    }
+
     val_t Store::get_global(ModuleInst &moduleInst, index_decl_t index) {
         return globals[moduleInst.get_global(index)].get_value();
     }
@@ -26,6 +30,22 @@ namespace jwm::runtime {
             auto value = executor::constexprEval((*this), globalInst, globalDesc.init);
 
             globals.push_back({globalDesc, value});
+        });
+
+        ModuleInst inst;
+
+        module.for_each_function([&](func_args_decl_t &args, code_decl_t &code) {
+           functions.push_back({args, code});
+        });
+
+        module.for_each_table([&](table_decl_t &table) {
+            tables.push_back({table});
+        });
+
+        module.for_each_memory([&](mem_decl_t &memory) {
+            Memory mem(memory, trap);
+
+            memories.push_back(mem);
         });
     }
 }

@@ -31,6 +31,8 @@ namespace jwm::runtime {
             trap(t),
             m_ptr(reinterpret_cast<byte_t*>(std::malloc(s * page_size)))
         {}
+        Memory(mem_decl_t &memory, trap_t t) :
+            Memory(memory.min, memory.max, t) {}
 
         ~Memory() { std::free(m_ptr); }
 
