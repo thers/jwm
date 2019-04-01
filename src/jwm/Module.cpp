@@ -88,39 +88,28 @@ namespace jwm::runtime {
         return &globals[index];
     }
 
-    index_decl_t ModuleInst::add_type(func_args_decl_t &type) {
+    void ModuleInst::add_type(func_args_decl_t &type) {
         types.push_back(type);
-        return types.size() - 1;
     }
 
-    index_decl_t ModuleInst::add_func(addr_t addr) {
+    void ModuleInst::add_func(addr_t addr) {
         funcaddr.push_back(addr);
-        return funcaddr.size() - 1;
     }
 
-    index_decl_t ModuleInst::add_table(addr_t addr) {
+    void ModuleInst::add_table(addr_t addr) {
         tableaddr.push_back(addr);
-        return tableaddr.size() - 1;
     }
 
-    index_decl_t ModuleInst::add_memory(addr_t addr) {
+    void ModuleInst::add_memory(addr_t addr) {
         memaddr.push_back(addr);
-        return memaddr.size() - 1;
     }
 
-    index_decl_t ModuleInst::add_global(addr_t addr, name_t &name) {
+    void ModuleInst::add_global(addr_t addr) {
         globaladdr.push_back(addr);
-
-        index_decl_t index = globaladdr.size() - 1;
-
-        globals_map.insert(std::pair<name_t, index_decl_t>(name, index));
-
-        return index;
     }
 
-    index_decl_t ModuleInst::add_export(export_inst_t &einst) {
-        exportinst.push_back(einst);
-        return exportinst.size() - 1;
+    void ModuleInst::add_export(addr_t addr, name_t &name, exporttype type) {
+        exportinst.push_back({addr, name, type});
     }
 
     func_args_decl_t ModuleInst::get_type(index_decl_t index) {
@@ -141,13 +130,5 @@ namespace jwm::runtime {
 
     addr_t ModuleInst::get_global(index_decl_t index) {
         return globaladdr[index];
-    }
-
-    addr_t ModuleInst::get_global(name_t &name) {
-        return globaladdr[globals_map[name]];
-    }
-
-    export_inst_t ModuleInst::get_export(index_decl_t index) {
-        return exportinst[index];
     }
 }

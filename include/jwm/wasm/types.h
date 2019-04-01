@@ -92,14 +92,10 @@ namespace jwm::wasm {
         index_decl_t idx;
     };
 
-    struct external_value_t {
-        exporttype type;
-        addr_t addr;
-    };
-
     struct export_inst_t {
+        addr_t addr;
         name_t name;
-        external_value_t externval;
+        exporttype type;
     };
 
     typedef std::size_t pos_t;

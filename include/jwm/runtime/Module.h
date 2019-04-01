@@ -65,6 +65,20 @@ namespace jwm::runtime {
                 cb(memory);
             }
         }
+
+        template<typename T>
+        void for_each_element(T cb) {
+            for (auto element: elements) {
+                cb(element);
+            }
+        }
+
+        template<typename T>
+        void for_each_export(T cb) {
+            for (auto exprt: exports) {
+                cb(exprt);
+            }
+        }
     };
 
     class ModuleInst {
@@ -75,7 +89,6 @@ namespace jwm::runtime {
         using moduleinst_memaddr_t = vec_t<addr_t>;
         using moduleinst_globaladdr_t = vec_t<addr_t>;
         using moduleinst_exportinst_t = vec_t<export_inst_t>;
-        using moduleinst_map_t = std::map<name_t, index_decl_t>;
     private:
         Module::module_types_t types;
         moduleinst_funcaddr_t funcaddr;
@@ -83,19 +96,18 @@ namespace jwm::runtime {
         moduleinst_memaddr_t memaddr;
         moduleinst_globaladdr_t globaladdr;
         moduleinst_exportinst_t exportinst;
-        moduleinst_map_t globals_map;
     public:
-        index_decl_t add_type(func_args_decl_t &type);
+        void add_type(func_args_decl_t &type);
 
-        index_decl_t add_func(addr_t addr);
+        void add_func(addr_t addr);
 
-        index_decl_t add_table(addr_t addr);
+        void add_table(addr_t addr);
 
-        index_decl_t add_memory(addr_t addr);
+        void add_memory(addr_t addr);
 
-        index_decl_t add_global(addr_t addr, name_t &name);
+        void add_global(addr_t addr);
 
-        index_decl_t add_export(export_inst_t &einst);
+        void add_export(addr_t addr, name_t &name, exporttype type);
 
         func_args_decl_t get_type(index_decl_t index);
 
@@ -106,9 +118,5 @@ namespace jwm::runtime {
         addr_t get_memory(index_decl_t index);
 
         addr_t get_global(index_decl_t index);
-
-        addr_t get_global(name_t &name);
-
-        export_inst_t get_export(index_decl_t index);
     };
 }

@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
     runtime::ModuleInst mi;
     runtime::Store st;
 
-    st.allocate_module(mi, module);
+    auto md = st.allocate_module(mi, module);
 
     printbv(content);
 

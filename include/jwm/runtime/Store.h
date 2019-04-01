@@ -40,13 +40,17 @@ namespace jwm::runtime {
                 limits(l) {}
     };
 
+    class ExportInst {
+
+    };
+
     class Store {
         Stack stack;
         vec_t<FuncInst> functions;
         vec_t<GlobalInst> globals;
         vec_t<TableInst> tables;
         vec_t<Memory> memories;
-
+        vec_t<ExportInst> exports;
     public:
         static void trap();
 
@@ -54,6 +58,6 @@ namespace jwm::runtime {
 
         val_t get_global(ModuleInst &moduleInst, name_t name);
 
-        void allocate_module(ModuleInst &globalInst, Module &module);
+        ModuleInst allocate_module(ModuleInst &globalInst, Module &module);
     };
 }
