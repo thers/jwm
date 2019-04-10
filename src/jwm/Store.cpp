@@ -47,10 +47,10 @@ namespace jwm::runtime {
         });
 
         module.for_each_memory([&](mem_decl_t &memory) {
-            Memory mem(memory, trap);
+            auto mem = std::make_unique<Memory>(memory, trap);
 
             inst.add_memory(memories.size());
-            memories.push_back(mem);
+            memories.push_back(std::move(mem));
         });
 
         module.for_each_element([&](element_decl_t &element) {

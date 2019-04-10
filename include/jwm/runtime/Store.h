@@ -49,7 +49,7 @@ namespace jwm::runtime {
         vec_t<FuncInst> functions;
         vec_t<GlobalInst> globals;
         vec_t<TableInst> tables;
-        vec_t<Memory> memories;
+        vec_t<std::unique_ptr<Memory>> memories;
         vec_t<ExportInst> exports;
     public:
         static void trap();
