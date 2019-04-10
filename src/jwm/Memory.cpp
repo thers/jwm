@@ -29,4 +29,11 @@ namespace jwm::runtime {
 
         m_ptr[at] = b;
     }
+
+    void Memory::write(u32_t at, vec_t<byte_t> b) {
+        check_boundaries(at);
+        check_boundaries(at + b.size());
+
+        std::memcpy(&m_ptr[at], b.data(), b.size());
+    }
 }

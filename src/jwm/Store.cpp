@@ -62,26 +62,32 @@ namespace jwm::runtime {
         module.for_each_export([&](export_decl_t &exprt) {
             addr_t address;
 
-           switch (exprt.type) {
-               case exporttype::et_funcidx:
-                   address = inst.get_func(exprt.idx);
-                   break;
+            switch (exprt.type) {
+                case exporttype::et_funcidx:
+                    address = inst.get_func(exprt.idx);
+                    break;
 
-               case exporttype::et_globalidx:
-                   address = inst.get_global(exprt.idx);
-                   break;
+                case exporttype::et_globalidx:
+                    address = inst.get_global(exprt.idx);
+                    break;
 
-               case exporttype::et_memidx:
-                   address = inst.get_memory(exprt.idx);
-                   break;
+                case exporttype::et_memidx:
+                    address = inst.get_memory(exprt.idx);
+                    break;
 
-               default:
-               case exporttype::et_tableidx:
-                   address = inst.get_table(exprt.idx);
-                   break;
-           }
+                default:
+                case exporttype::et_tableidx:
+                    address = inst.get_table(exprt.idx);
+                    break;
+            }
 
-           inst.add_export(address, exprt.export_name, exprt.type);
+            inst.add_export(address, exprt.export_name, exprt.type);
+        });
+
+        module.for_each_data([&](data_t &data) {
+            auto offset = executor::constexprEval((* this), globalInst, data.offset);
+
+            this->memories[inst.get_memory(data.data)]->write(std::get<i32_t>(offset), data.init);
         });
 
         return inst;

@@ -43,5 +43,7 @@ namespace jwm::runtime {
         byte_t read(u32_t at);
 
         void write(u32_t at, byte_t b);
+
+        void write(u32_t at, vec_t<byte_t> b);
     };
 }

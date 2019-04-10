@@ -24,8 +24,6 @@ int main(int argc, char** argv) {
 
     auto md = st.allocate_module(mi, module);
 
-    printbv(content);
-
     return 0;
 }
 

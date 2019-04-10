@@ -79,6 +79,13 @@ namespace jwm::runtime {
                 cb(exprt);
             }
         }
+
+        template<typename T>
+        void for_each_data(T cb) {
+            for (auto data: datas) {
+                cb(data);
+            }
+        }
     };
 
     class ModuleInst {
