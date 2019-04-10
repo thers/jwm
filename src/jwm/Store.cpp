@@ -25,6 +25,10 @@ namespace jwm::runtime {
 //        return globals[moduleInst.get_global(name)].get_value();
 //    }
 
+    void TableInst::set_elem(u32_t at, addr_t address) {
+        elem.insert(elem.begin() + at, address);
+    }
+
     ModuleInst Store::allocate_module(ModuleInst &globalInst, Module &module) {
         ModuleInst inst;
 
@@ -54,8 +58,12 @@ namespace jwm::runtime {
         });
 
         module.for_each_element([&](element_decl_t &element) {
-            auto value = executor::constexprEval((*this), inst, element.offset);
+            auto offset = std::get<i32_t>(executor::constexprEval((*this), inst, element.offset));
             auto table = tables[element.table];
+
+            for (size_t i = 0; i <  element.init.size(); i++) {
+                table.set_elem(offset + i, inst.get_func(element.init[i]));
+            }
         });
 
         // Populating exports
@@ -89,6 +97,8 @@ namespace jwm::runtime {
 
             this->memories[inst.get_memory(data.data)]->write(std::get<i32_t>(offset), data.init);
         });
+
+
 
         return inst;
     }

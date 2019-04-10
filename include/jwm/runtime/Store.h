@@ -34,10 +34,13 @@ namespace jwm::runtime {
     class TableInst {
         type elemtype;
         limit_decl_t limits;
+        vec_t<addr_t> elem;
     public:
         TableInst(limit_decl_t &l) :
                 elemtype(type::t_funcref),
                 limits(l) {}
+
+        void set_elem(u32_t at, addr_t address);
     };
 
     class ExportInst {
