@@ -102,4 +102,10 @@ namespace jwm::runtime {
 
         return inst;
     }
+
+    val_t Store::start(ModuleInst &moduleInst, Module &module) {
+        auto funcInst = functions[moduleInst.get_func(module.get_start())];
+
+        return {0};
+    }
 }

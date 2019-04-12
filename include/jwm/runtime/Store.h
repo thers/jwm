@@ -62,5 +62,7 @@ namespace jwm::runtime {
         val_t get_global(ModuleInst &moduleInst, name_t name);
 
         ModuleInst allocate_module(ModuleInst &globalInst, Module &module);
+
+        val_t start(ModuleInst &moduleInst, Module &module);
     };
 }

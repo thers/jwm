@@ -23,6 +23,7 @@ int main(int argc, char** argv) {
     runtime::Store st;
 
     auto md = st.allocate_module(mi, module);
+    st.start(md, module);
 
     return 0;
 }

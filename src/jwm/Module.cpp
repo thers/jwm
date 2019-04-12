@@ -88,6 +88,10 @@ namespace jwm::runtime {
         return &globals[index];
     }
 
+    index_decl_t Module::get_start() {
+        return start;
+    }
+
     void ModuleInst::add_type(func_args_decl_t &type) {
         types.push_back(type);
     }

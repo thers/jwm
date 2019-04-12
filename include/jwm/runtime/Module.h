@@ -38,6 +38,8 @@ namespace jwm::runtime {
 
         global_decl_t *get_global(index_decl_t index);
 
+        index_decl_t get_start();
+
         template<typename T>
         void for_each_global(T cb) {
             for (auto global: globals) {
