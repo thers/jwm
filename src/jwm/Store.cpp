@@ -98,8 +98,6 @@ namespace jwm::runtime {
             this->memories[inst.get_memory(data.data)]->write(std::get<i32_t>(offset), data.init);
         });
 
-
-
         return inst;
     }
 

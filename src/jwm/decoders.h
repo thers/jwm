@@ -234,8 +234,9 @@ namespace jwm::wasm::decoders {
         auto op = byteEnumItem<opcode>(reader);
         auto opname = opcode_names[op];
         instr_arg_decl_t arg;
+        size_t scopesDepth = 1;
 
-        while (op != opcode::op_end) {
+        while (scopesDepth > 0) {
             if (!opname) {
                 scream("Unknown opcode");
             }
@@ -305,6 +306,7 @@ namespace jwm::wasm::decoders {
                 case opcode::op_block:
                 case opcode::op_loop:
                 case opcode::op_if:
+                    scopesDepth++;
                     arg = result(reader);
                     break;
 
@@ -313,6 +315,9 @@ namespace jwm::wasm::decoders {
                     arg = br_table_arg(reader);
                     break;
 
+                case opcode::op_end:
+                case opcode::op_return:
+                    scopesDepth--;
 
                 default:
                     arg = std::nullopt;
