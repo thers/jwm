@@ -14,7 +14,7 @@ namespace jwm {
 }
 
 namespace jwm::runtime {
-    Module::Module(content_t &content) {
+    Module::Module(const content_t &content) {
         Reader reader(content);
 
         if (decoders::reinterpretBytes<u32_t>(reader) != magicNumber) {

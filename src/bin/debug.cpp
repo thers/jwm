@@ -17,15 +17,16 @@ wasm::content_t readModule(char *path);
 
 int main(int argc, char** argv) {
     auto content = readModule(argv[1]);
-    auto module = decode_module(content);
+    ModuleImports imports {
+        {"test", {
+            {"int", 123}
+        }}
+    };
 
-    runtime::ModuleInst mi;
-    runtime::Store st;
-
-    auto md = st.allocate_module(mi, module);
+    ModuleInstance module(content, imports);
 
     args_t args = {20, 2726347};
-    auto ret = st.start(md, module, args);
+    auto ret = module.start(args);
 
     print("Retval: {}", std::get<i32_t>(ret));
 

@@ -41,9 +41,7 @@ namespace jwm::runtime {
         elem.insert(elem.begin() + at, address);
     }
 
-    ModuleInst Store::allocate_module(ModuleInst &globalInst, Module &module) {
-        ModuleInst inst;
-
+    void Store::allocate_module(ModuleInst &globalInst, Module &module, ModuleInst &inst) {
         // Evaluating globals from globals module inst
         module.for_each_global([&](global_decl_t globalDesc) {
             auto value = executor::constexprEval((*this), globalInst, globalDesc.init);
@@ -109,8 +107,6 @@ namespace jwm::runtime {
 
             this->memories[inst.get_memory(data.data)]->write(std::get<i32_t>(offset), data.init);
         });
-
-        return inst;
     }
 
     val_t Store::start(ModuleInst &moduleInst, Module &module, args_t &args) {

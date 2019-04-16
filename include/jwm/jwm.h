@@ -3,7 +3,6 @@
 #include "stdinc.h"
 #include "wasm.h"
 #include "runtime.h"
+#include "exceptions.h"
 
-namespace jwm {
-    runtime::Module decode_module(content_t &content);
-}
+#include "ModuleInstance.h"

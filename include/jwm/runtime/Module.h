@@ -34,7 +34,7 @@ namespace jwm::runtime {
         module_datas_t datas;
         module_start_t start = 0;
     public:
-        Module(content_t &content);
+        Module(const content_t &content);
 
         global_decl_t *get_global(index_decl_t index);
 

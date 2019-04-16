@@ -66,7 +66,7 @@ namespace jwm::runtime {
 
         FuncInst get_func(ModuleInst &moduleInst, index_decl_t index);
 
-        ModuleInst allocate_module(ModuleInst &globalInst, Module &module);
+        void allocate_module(ModuleInst &globalInst, Module &module, ModuleInst &inst);
 
         val_t start(ModuleInst &moduleInst, Module &module, args_t &args);
     };
