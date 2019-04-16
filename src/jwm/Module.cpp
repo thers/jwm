@@ -92,7 +92,7 @@ namespace jwm::runtime {
         return start;
     }
 
-    void ModuleInst::add_type(func_args_decl_t &type) {
+    void ModuleInst::add_type(func_type_decl_t &type) {
         types.push_back(type);
     }
 
@@ -116,7 +116,7 @@ namespace jwm::runtime {
         exportinst.push_back({addr, name, type});
     }
 
-    func_args_decl_t ModuleInst::get_type(index_decl_t index) {
+    func_type_decl_t ModuleInst::get_type(index_decl_t index) {
         return types[index];
     }
 

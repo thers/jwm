@@ -1,6 +1,14 @@
 #include <jwm/runtime.h>
 
 namespace jwm::runtime {
+    const func_decl_t FuncInst::get_func() {
+        return code.func;
+    }
+
+    const func_type_decl_t FuncInst::get_type() {
+        return type;
+    }
+
     val_t GlobalInst::get_value() {
         return value;
     }
@@ -25,6 +33,10 @@ namespace jwm::runtime {
 //        return globals[moduleInst.get_global(name)].get_value();
 //    }
 
+    FuncInst Store::get_func(jwm::runtime::ModuleInst &moduleInst, index_decl_t index) {
+        return functions[moduleInst.get_func(index)];
+    }
+
     void TableInst::set_elem(u32_t at, addr_t address) {
         elem.insert(elem.begin() + at, address);
     }
@@ -40,7 +52,7 @@ namespace jwm::runtime {
             globals.push_back({globalDesc, value});
         });
 
-        module.for_each_function([&](func_args_decl_t &args, code_decl_t &code) {
+        module.for_each_function([&](func_type_decl_t &args, code_decl_t &code) {
             inst.add_func(functions.size());
             functions.push_back({args, code});
         });
@@ -61,7 +73,7 @@ namespace jwm::runtime {
             auto offset = std::get<i32_t>(executor::constexprEval((*this), inst, element.offset));
             auto table = tables[element.table];
 
-            for (size_t i = 0; i <  element.init.size(); i++) {
+            for (size_t i = 0; i < element.init.size(); i++) {
                 table.set_elem(offset + i, inst.get_func(element.init[i]));
             }
         });
@@ -93,7 +105,7 @@ namespace jwm::runtime {
         });
 
         module.for_each_data([&](data_t &data) {
-            auto offset = executor::constexprEval((* this), globalInst, data.offset);
+            auto offset = executor::constexprEval((*this), globalInst, data.offset);
 
             this->memories[inst.get_memory(data.data)]->write(std::get<i32_t>(offset), data.init);
         });
@@ -101,9 +113,9 @@ namespace jwm::runtime {
         return inst;
     }
 
-    val_t Store::start(ModuleInst &moduleInst, Module &module) {
+    val_t Store::start(ModuleInst &moduleInst, Module &module, args_t &args) {
         auto funcInst = functions[moduleInst.get_func(module.get_start())];
 
-        return {0};
+        return executor::functionEval((*this), moduleInst, funcInst.get_func(), args);
     }
 }

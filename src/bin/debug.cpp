@@ -23,7 +23,11 @@ int main(int argc, char** argv) {
     runtime::Store st;
 
     auto md = st.allocate_module(mi, module);
-    st.start(md, module);
+
+    args_t args = {20, 2726347};
+    auto ret = st.start(md, module, args);
+
+    print("Retval: {}", std::get<i32_t>(ret));
 
     return 0;
 }

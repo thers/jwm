@@ -114,7 +114,7 @@ namespace jwm::wasm::decoders {
         return {u32(reader), u32(reader)};
     }
 
-    inline func_args_decl_t functype(Reader& reader) {
+    inline func_type_decl_t functype(Reader& reader) {
         auto funcbyte = byteEnumItem<type>(reader);
 
         if (funcbyte != type::t_functype) {

@@ -49,7 +49,7 @@ namespace jwm::wasm {
         u32_t max;
     };
 
-    struct func_args_decl_t {
+    struct func_type_decl_t {
         vec_t<valtype> arguments_types;
         vec_t<valtype> results_types;
     };
@@ -120,7 +120,9 @@ namespace jwm::wasm {
 
     using br_table_arg_t = std::pair<vec_t<labelidx_decl_t>, labelidx_decl_t>;
 
-    using instr_arg_decl_t = std::optional<std::variant<u32_t, u64_t, i32_t, i64_t, f32_t, f64_t,
+    using val_t = std::variant<i32_t, i64_t, f32_t, f64_t>;
+
+    using instr_arg_decl_t = std::optional<std::variant<i32_t, i64_t, f32_t, f64_t, u32_t, u64_t,
             result_decl_t, memory_immediate_arg_decl_t, br_table_arg_t>>;
     struct instr_decl_t {
         opcode op;
@@ -148,8 +150,8 @@ namespace jwm::wasm {
     };
 
     struct code_decl_t {
-        u32_t size;
-        func_decl_t func;
+        const u32_t size;
+        const func_decl_t func;
     };
 
     struct element_decl_t {
@@ -175,5 +177,5 @@ namespace jwm::wasm {
         content_t init;
     };
 
-    using val_t = std::variant<i32_t, i64_t, f32_t, f64_t>;
+    using args_t = vec_t<val_t>;
 }

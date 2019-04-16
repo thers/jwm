@@ -10,12 +10,15 @@ using namespace jwm::wasm;
 
 namespace jwm::runtime {
     class FuncInst {
-        func_args_decl_t type;
-        code_decl_t code;
+        const func_type_decl_t type;
+        const code_decl_t code;
     public:
-        FuncInst(func_args_decl_t &t, code_decl_t &c) :
+        FuncInst(func_type_decl_t &t, code_decl_t &c) :
                 type(t),
                 code(c) {}
+
+        const func_decl_t get_func();
+        const func_type_decl_t get_type();
     };
 
     class GlobalInst {
@@ -61,8 +64,10 @@ namespace jwm::runtime {
 
         val_t get_global(ModuleInst &moduleInst, name_t name);
 
+        FuncInst get_func(ModuleInst &moduleInst, index_decl_t index);
+
         ModuleInst allocate_module(ModuleInst &globalInst, Module &module);
 
-        val_t start(ModuleInst &moduleInst, Module &module);
+        val_t start(ModuleInst &moduleInst, Module &module, args_t &args);
     };
 }

@@ -10,7 +10,7 @@ using namespace jwm::wasm;
 namespace jwm::runtime {
     class Module {
     public:
-        using module_types_t = vec_t<func_args_decl_t>;
+        using module_types_t = vec_t<func_type_decl_t>;
         using module_imports_t = vec_t<import_decl_t>;
         using module_functions_t = vec_t<u32_t>;
         using module_tables_t = vec_t<table_decl_t>;
@@ -106,7 +106,7 @@ namespace jwm::runtime {
         moduleinst_globaladdr_t globaladdr;
         moduleinst_exportinst_t exportinst;
     public:
-        void add_type(func_args_decl_t &type);
+        void add_type(func_type_decl_t &type);
 
         void add_func(addr_t addr);
 
@@ -118,7 +118,7 @@ namespace jwm::runtime {
 
         void add_export(addr_t addr, name_t &name, exporttype type);
 
-        func_args_decl_t get_type(index_decl_t index);
+        func_type_decl_t get_type(index_decl_t index);
 
         addr_t get_func(index_decl_t index);
 
