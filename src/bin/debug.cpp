@@ -4,6 +4,7 @@
 #include <iterator>
 #include <vector>
 #include <cstdio>
+#include <chrono>
 
 #include <jwm/jwm.h>
 
@@ -23,12 +24,17 @@ int main(int argc, char** argv) {
         }}
     };
 
+    auto start = std::chrono::high_resolution_clock::now();
+
     ModuleInstance module(content, imports);
 
     args_t args = {20, 2726347};
     auto ret = module.start(args);
 
-    print("Retval: {}", std::get<i32_t>(ret));
+    auto end = std::chrono::high_resolution_clock::now();
+    auto measurement = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+
+    print("Retval: {}, in {}us\n", std::get<i32_t>(ret), measurement);
 
     return 0;
 }
