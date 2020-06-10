@@ -55,7 +55,7 @@ namespace jwm::runtime {
         vec_t<FuncInst> functions;
         vec_t<GlobalInst> globals;
         vec_t<TableInst> tables;
-        vec_t<std::unique_ptr<Memory>> memories;
+        vec_t<Memory*> memories;
         vec_t<ExportInst> exports;
     public:
         static void trap();
@@ -65,6 +65,8 @@ namespace jwm::runtime {
         val_t get_global(ModuleInst &moduleInst, name_t name);
 
         FuncInst get_func(ModuleInst &moduleInst, index_decl_t index);
+
+        std::unique_ptr<Memory> get_memory() const;
 
         void allocate_module(ModuleInst &globalInst, Module &module, ModuleInst &inst);
 

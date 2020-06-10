@@ -24,6 +24,18 @@ namespace jwm::runtime {
         return m_ptr[at];
     }
 
+    vec_t<byte_t> Memory::read(u32_t at, size_t length) {
+        check_boundaries(at);
+        check_boundaries(at + length);
+
+        vec_t<byte_t> target;
+        target.resize(length);
+
+        std::memcpy(&target[0], &m_ptr[at], length);
+
+        return target;
+    }
+
     void Memory::write(u32_t at, byte_t b) {
         check_boundaries(at);
 

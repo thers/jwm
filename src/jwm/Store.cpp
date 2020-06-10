@@ -41,6 +41,12 @@ namespace jwm::runtime {
         elem.insert(elem.begin() + at, address);
     }
 
+    std::unique_ptr<Memory> Store::get_memory() const {
+        std::unique_ptr<Memory> ptr(memories[0]);
+
+        return ptr;
+    }
+
     void Store::allocate_module(ModuleInst &globalInst, Module &module, ModuleInst &inst) {
         // Evaluating globals from globals module inst
         module.for_each_global([&](global_decl_t globalDesc) {
@@ -61,10 +67,10 @@ namespace jwm::runtime {
         });
 
         module.for_each_memory([&](mem_decl_t &memory) {
-            auto mem = std::make_unique<Memory>(memory, trap);
+            auto mem = new Memory(memory, trap);
 
             inst.add_memory(memories.size());
-            memories.push_back(std::move(mem));
+            memories.push_back(mem);
         });
 
         module.for_each_element([&](element_decl_t &element) {

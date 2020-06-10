@@ -41,6 +41,7 @@ namespace jwm::runtime {
         u32_t get_size();
 
         byte_t read(u32_t at);
+        vec_t<byte_t> read(u32_t at, size_t length);
 
         void write(u32_t at, byte_t b);
 

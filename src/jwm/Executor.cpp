@@ -14,6 +14,14 @@ namespace jwm::runtime::executor {
         return {popOne<T>(stack), popOne<T>(stack)};
     }
 
+    template <typename T>
+    inline val_t load(const Store &store, const ModuleInst &inst, instr_arg_decl_t &arg, size_t length) {
+        auto memarg = std::get<memory_immediate_arg_decl_t>(arg.value());
+        auto data = store.get_memory()->read(memarg.offset, length);
+
+        return *reinterpret_cast<T*>(&data[0]);
+    }
+
     val_t initVal(valtype type) {
         switch (type) {
             default:
@@ -106,7 +114,7 @@ namespace jwm::runtime::executor {
     val_t functionEval(
             runtime::Store &store,
             ModuleInst &moduleInst,
-            const func_decl_t &func,
+            const FuncInst &func,
             const args_t &args
     ) {
         vec_t<val_t> locals;
@@ -140,7 +148,7 @@ namespace jwm::runtime::executor {
             locals[index] = val;
         };
 
-        for (auto arg: args) {
+        for (auto arg: func.get_type().arguments_types) {
             locals.push_back(arg);
         }
 
@@ -152,6 +160,60 @@ namespace jwm::runtime::executor {
 
         for (auto[op, opname, arg]: func.exp) {
             switch (op) {
+                case opcode::op_drop: {
+                    pop();
+                    break;
+                }
+
+                case opcode::op_select: {
+                    auto c = popOne<i32_t>(stack);
+
+                    auto p1 = pop();
+                    auto p2 = pop();
+
+                    if (c != 0) {
+                        push(p1);
+                    } else {
+                        push(p2);
+                    }
+
+                    break;
+                }
+
+                case opcode::op_i32_load: {
+                    push(load<i32_t>(store, moduleInst, arg, sizeof(i32_t)));
+                    break;
+                }
+                case opcode::op_i64_load: {
+                    push(load<i32_t>(store, moduleInst, arg, sizeof(i64_t)));
+                    break;
+                }
+                case opcode::op_i32_load_8_s:
+                case opcode::op_i32_load_8_u: {
+                    push(load<i32_t>(store, moduleInst, arg, 1));
+                    break;
+                }
+                case opcode::op_i32_load_16_s:
+                case opcode::op_i32_load_16_u: {
+                    push(load<i32_t>(store, moduleInst, arg, 2));
+                    break;
+                }
+                case opcode::op_i64_load_8_s:
+                case opcode::op_i64_load_8_u: {
+                    push(load<i64_t>(store, moduleInst, arg, 1));
+                    break;
+                }
+                case opcode::op_i64_load_16_s:
+                case opcode::op_i64_load_16_u: {
+                    push(load<i64_t>(store, moduleInst, arg, 2));
+                    break;
+                }
+                case opcode::op_i64_load_32_s:
+                case opcode::op_i64_load_32_u: {
+                    push(load<i64_t>(store, moduleInst, arg, 4));
+                    break;
+                }
+
                 case opcode::op_call: {
                     auto funcIndex = std::get<index_decl_t>(arg.value());
                     auto func = store.get_func(moduleInst, funcIndex);
